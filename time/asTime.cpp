@@ -3,7 +3,7 @@
 #include <cstring>
 
 time_t asTime::s_sysStart = ::time(NULL);
-time_t asTime::s_sysZone = 8 * 60 * 60;
+time_t asTime::s_sysZone = asTime::GetSysTimeZone();
 time_t asTime::s_timeZone = 8 * 60 * 60;
 time_t asTime::s_timeOffset = 0;
 time_t asTime::s_todayZero = 0;
@@ -137,5 +137,100 @@ void asTime::GetLocalTime(time_t timestamp, YMDHMS& t)
 	t.hour.i32p = ti->tm_hour;
 	t.minutes.i32p = ti->tm_min;
 	t.second.i32p = ti->tm_sec;
+}
+
+void asTime::GetLocalTimeStr(char* str)
+{
+	tm* ti = GetLocalTime();
+	snprintf(str, TIME_STR_MAX_LEN, "%d-%d-%d %d:%d:%d",
+		ti->tm_year + 1900,
+		ti->tm_mon + 1,
+		ti->tm_mday,
+		ti->tm_hour,
+		ti->tm_min,
+		ti->tm_sec);
+}
+
+void asTime::GetLocalTimeStrYMD(char* str)
+{
+	tm* ti = GetLocalTime();
+	snprintf(str, TIME_STR_MAX_LEN, "%d-%d-%d", ti->tm_year + 1900, ti->tm_mon + 1, ti->tm_mday);
+}
+
+void asTime::GetLocalTimeStrYMDH(char* str)
+{
+	tm* ti = GetLocalTime();
+	snprintf(str, TIME_STR_MAX_LEN, "%d-%d-%d %d", ti->tm_year + 1900, ti->tm_mon + 1, ti->tm_mday,ti->tm_hour);
+}
+
+void asTime::GetLocalTimeStrHMS(char* str)
+{
+	tm* ti = GetLocalTime();
+	snprintf(str, TIME_STR_MAX_LEN, "%d:%d:%d", ti->tm_hour, ti->tm_min, ti->tm_sec);
+}
+
+Union32 asTime::GetDateNum(bool localtime)
+{
+	tm* t = localtime ? GetLocalTime() : GetTime();
+	Union32 un;
+	un.i32p = (t->tm_year + 1900) * 10000 + t->tm_mon * 100 + t->tm_mday;
+	return un;
+}
+
+Union32 asTime::GetTimeNum(bool localtime)
+{
+	tm* t = localtime ? GetLocalTime() : GetTime();
+	Union32 un;
+	un.i32p = (t->tm_hour + 1900) * 10000 + t->tm_min * 100 + t->tm_sec;
+	return un;
+}
+
+Union64 asTime::GetDayZero(time_t timestamp)
+{
+	Union64 un;
+	un.i64p = timestamp - ((timestamp + asTime::s_timeZone) % 86400);
+	return un;
+}
+
+Union64 asTime::GetTodayZero()
+{
+	return GetDayZero(GetTimeNow().i64p);
+}
+
+i32 asTime::GetDaySecDiff(time_t day1, time_t day2)
+{
+	Union64 d1 = GetDayZero(day1);
+	Union64 d2 = GetDayZero(day2);
+	return i32(d2.i64p - d1.i64p);
+}
+
+i32 asTime::GetDaysDiff(time_t now, time_t last, i32 begintm)
+{
+	return i32(asTime::GetDays(now - begintm + 86400) -
+		asTime::GetDays(last - begintm + 86400));
+}
+
+u32 asTime::GetDays(time_t timestamp)
+{
+	return u32((timestamp + asTime::s_timeZone) % 86400);
+}
+
+u32 asTime::GetWeeks(time_t timestamp)
+{
+	//1970年1月1日是星期四
+	return(GetDays(timestamp) + 3) / 7;
+}
+
+time_t asTime::GetSysTimeZone()
+{
+#ifdef _WIN32
+	long t = 0;
+	::_get_timezone(&t);
+	return (time_t)t;
+#else
+	time_t timestamp = time(0);
+	tm* timeinfo = localtime(&timestamp);
+	return (time_t)timeinfo->tm_gmtoff;
+#endif
 }
 

@@ -55,8 +55,31 @@ public:
 	static tm* GetLocalTime(time_t timestamp);
 	static void GetLocalTime(YMDHMS& t);
 	static void GetLocalTime(time_t timestamp, YMDHMS& t);
-
-
+	//格式化
+	static void GetLocalTimeStr(char* str);
+	static void GetLocalTimeStrYMD(char* str);
+	static void GetLocalTimeStrYMDH(char* str);
+	static void GetLocalTimeStrHMS(char* str);
+	// 时间格式成数字类型
+	static Union32 GetDateNum(bool localtime);
+	static Union32 GetTimeNum(bool localtime);
+	//获取0点时间戳
+	static Union64 GetDayZero(time_t timestamp);
+	// 获取今天0点时间戳
+	static Union64 GetTodayZero();
+	// 计算日差的秒
+	static i32 GetDaySecDiff(time_t day1, time_t day2);
+	// 计算日差天数 每日的begintm作为临界点
+	static i32 GetDaysDiff(time_t now, time_t last, i32 begintm);
+	// 获取从1970年开始到timestamp现在的天数
+	static u32 GetDays(time_t timestamp);
+	// 获取周数
+	static u32 GetWeeks(time_t timestamp);
+	// 获取系统的时区（秒）
+	static time_t GetSysTimeZone();
+	// 设置时间偏移
+	static void SetTimeOffset(time_t offset) { asTime::s_timeOffset = offset; }
+	static void SetTimeZone(time_t zone) { asTime::s_timeZone = zone; }
 private:
 	static time_t s_timeZone;// 时区 用东八区
 	static time_t s_sysZone; // 系统所在的时区
