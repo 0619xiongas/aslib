@@ -57,8 +57,8 @@ bool asFileWriter::WriteString(const char* str, bool end, bool time)
 		buf = "[";
 		buf += tstr;
 		buf += "]";
-		buf += str;
 	}
+	buf += str;
 	m_fs << buf;
 	if (end)
 	{
