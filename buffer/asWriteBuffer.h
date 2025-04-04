@@ -1,4 +1,16 @@
-#pragma once
+/*************************************************************************************
+ *
+ * 文 件 名:		asWriteBuffer.h
+ * 描    述:		写入缓冲区
+ * 
+ * 版    本：  V1.0
+ * 创 建 者：  astronaut
+ * 创建时间：  2024/5/26 10:42
+ * ======================================
+*************************************************************************************/
+
+#ifndef AS_WRITEBUFFER_H
+#define AS_WRITEBUFFER_H
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
@@ -94,3 +106,4 @@ private:
 	bool _Write(const void* data, ulint size);
 	asBuffer m_buffer;
 };
+#endif

@@ -1,4 +1,16 @@
-#pragma once
+/*************************************************************************************
+ *
+ * 文 件 名:		asReadBuffer.h
+ * 描    述:		读取缓冲区
+ * 
+ * 版    本：  V1.0
+ * 创 建 者：  astronaut
+ * 创建时间：  2024/5/26 9:05
+ * ======================================
+*************************************************************************************/
+#ifndef AS_READBUFFER_H
+#define AS_READBUFFER_H
+
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
@@ -79,3 +91,4 @@ private:
 	asBuffer	m_buf;
 	ulint		m_pos;	// 已读的大小
 };
+#endif // !AS_READBUFFER_H

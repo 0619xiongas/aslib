@@ -200,6 +200,16 @@ void asBuffer::Clear()
 	m_type = BUFFER_DATA_TYPE::BDT_NULL;
 }
 
+bool asBuffer::SetCurSize(ulint size)
+{
+	if (size < m_maxSize)
+	{
+		m_curSize = size;
+		return true;
+	}
+	return false;
+}
+
 void asBuffer::Copy(const asBuffer& other)
 {
 	Clear();

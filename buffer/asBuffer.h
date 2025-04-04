@@ -1,4 +1,16 @@
-#pragma once
+/*************************************************************************************
+ *
+ * 文 件 名:		asBuffer.h
+ * 描    述:		自定义缓冲区
+ * 
+ * 版    本：  V1.0
+ * 创 建 者：  astronaut
+ * 创建时间：  2024/5/18 17:53
+ * ======================================
+*************************************************************************************/
+
+#ifndef AS_BUFFER_H
+#define AS_BUFFER_H
 #include "../asBaseDefine.h"
 #include <cstring>
 
@@ -52,6 +64,8 @@ public:
 	bool SubSize(ulint size);
 
 	void Clear();
+
+	bool SetCurSize(ulint size);
 private:
 	// 拷贝
 	void Copy(const asBuffer& other);
@@ -60,3 +74,4 @@ private:
 	u64 m_curSize;
 	BUFFER_DATA_TYPE m_type = BUFFER_DATA_TYPE::BDT_NULL;
 };
+#endif
