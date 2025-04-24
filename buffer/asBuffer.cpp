@@ -156,10 +156,10 @@ bool asBuffer::SubData(ulint offset, ulint len)
 	{
 		if (0 == offset)
 		{
-			m_curSize = len; // 实际数据没删
+			m_curSize = len; // 实锟斤拷锟斤拷锟斤拷没删
 			return true;
 		}
-		else if(offset + len < m_curSize)
+		else if(offset + len <= m_curSize)
 		{
 			memmove(m_data, m_data + offset, len);
 			m_curSize = len;
