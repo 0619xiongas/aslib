@@ -18,6 +18,7 @@ typedef int					bool32;
 #define SAFE_DELETE(p) if(p){delete p; p = nullptr;}
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
+
 union Union32
 {
 	i8 i8p;
@@ -43,6 +44,19 @@ union Union64
 	f64 f64p;
 	void* pp;
 	Union32 union32p;
+};
+
+#define AS_NET_TCP_FLAG 0x20250422
+#define AS_NET_MAX_LEN 1073741824
+#define AS_NET_MSG_DIFF 0x10000000
+
+struct asNetTcpMsgHead
+{
+	asNetTcpMsgHead():m_flag(AS_NET_TCP_FLAG),m_len(0),m_msgId(0)
+	{}
+	u32		m_flag;//��Ϣͷ��־
+	u32		m_len; // ��Ϣ�峤�ȣ�����head
+	u32		m_msgId;//��Ϣ���
 };
 
 #endif
