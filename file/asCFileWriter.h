@@ -1,11 +1,11 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
  *
- * ÎÄ ¼ş Ãû:   asCFileWriter.h
- * Ãè    Êö:		ÎÄ¼şĞ´Èë£¬²ÉÓÃc·ç¸ñµÄFILE½øĞĞĞ´Èë
+ * æ–‡ ä»¶ å:   asCFileWriter.h
+ * æ    è¿°:		æ–‡ä»¶å†™å…¥ï¼Œé‡‡ç”¨cé£æ ¼çš„FILEè¿›è¡Œå†™å…¥
  * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/24 22:33
+ * ç‰ˆ    æœ¬ï¼š  V1.0
+ * åˆ› å»º è€…ï¼š  astronauts
+ * åˆ›å»ºæ—¶é—´ï¼š  2025/3/24 22:33
  * ======================================
 *************************************************************************************/
 #ifndef AS_C_FILEWRITER_H
@@ -15,7 +15,7 @@
 #include <string>
 #include <cstdio>
 
-// Ê¹ÓÃc±ê×¼FILE½øĞĞĞ´Èë
+// ä½¿ç”¨cæ ‡å‡†FILEè¿›è¡Œå†™å…¥
 
 class asCFileWriter
 {
@@ -23,17 +23,17 @@ public:
 	asCFileWriter();
 	~asCFileWriter();
 	bool Init(const char* path, bool app, bool brief, bool binary);
-	// end Ìí¼Ó"\n" time ÊÇ·ñĞèÒªÌí¼ÓÊ±¼äĞÅÏ¢
+	// end æ·»åŠ "\n" time æ˜¯å¦éœ€è¦æ·»åŠ æ—¶é—´ä¿¡æ¯
 	bool WriteString(const char* str, bool end, bool time);
 	bool WriteBytes(const char* bytes, u32 len);
 	bool OpenFile();
 	void CloseFile();
 private:
-	bool 			m_app;		// ÎÄ¼ş×·¼ÓĞ´ 
-	bool 			m_brief;	// ÊÇ·ñĞ´ÍêÁ¢¼´¹Ø±Õ
-	bool 			m_binary;	// ÊÇ·ñÊÇ¶ş½øÖÆÎÄ¼ş
-	std::string 	m_path;		// ÎÄ¼şÂ·¾¶
-	FILE* m_pFile;	// ÎÄ¼şÖ¸Õë
+	bool 			m_app;		// æ–‡ä»¶è¿½åŠ å†™ 
+	bool 			m_brief;	// æ˜¯å¦å†™å®Œç«‹å³å…³é—­
+	bool 			m_binary;	// æ˜¯å¦æ˜¯äºŒè¿›åˆ¶æ–‡ä»¶
+	std::string 	m_path;		// æ–‡ä»¶è·¯å¾„
+	FILE* m_pFile;	// æ–‡ä»¶æŒ‡é’ˆ
 };
 
 #endif

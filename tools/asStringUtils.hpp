@@ -1,15 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼þ Ãû:   asStringUtils.hpp
- * Ãè    Êö:		Ò»Ð©×Ö·û´®×ª»»¹¤¾ß
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/4/4 10:29
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_STRINGUTILS_H
+ï»¿#ifndef AS_STRINGUTILS_H
 #define AS_STRINGUTILS_H
 #include "../asBaseDefine.h"
 #include <cstdlib>
@@ -26,6 +15,7 @@ u32 StringCopy(T* dst, u32 dstlen, const T* src, u32 srclen)
 	dst[len] = 0;
 	return len;
 }
+
 template<typename T>
 std::string Num2String(T t)
 {
@@ -96,7 +86,7 @@ inline void StringSplit(const std::string& strs, char flag, std::vector<std::str
 	{
 		std::string tmp;
 		size_t start = 0;
-		for (size_t i = 0; i < strs.size(); ++i)
+		for (size_t i = 0;i < strs.size();++i)
 		{
 			if (strs[i] == flag)
 			{
@@ -135,7 +125,7 @@ void StringSplit(const std::string& strs, const char* flag, std::vector<std::str
 	{
 		size_t start = 0;
 		std::string sub;
-		for (size_t i = 0; i < strs.size(); ++i)
+		for (size_t i = 0;i < strs.size();++i)
 		{
 			if (i == strs.size() - 1)
 			{
@@ -146,10 +136,10 @@ void StringSplit(const std::string& strs, const char* flag, std::vector<std::str
 					strlist.push_back(sub);
 				}
 			}
-			else if (strs[i] == tmpFlag[0])
+			else if(strs[i] == tmpFlag[0])
 			{
 				bool cmp = true;
-				for (size_t k = 1; k < tmpFlag.size(); ++k)
+				for (size_t k = 1;k < tmpFlag.size();++k)
 				{
 					if (i + k >= strs.size())
 					{
@@ -184,7 +174,7 @@ void StringSplit(const std::string& strs, const char flag1, const char flag2, st
 	lists.clear();
 	std::vector<std::string> vec;
 	StringSplit(strs, flag1, vec);
-	for (size_t i = 0; i < vec.size(); ++i)
+	for (size_t i = 0;i < vec.size();++i)
 	{
 		std::vector<std::string> vec1;
 		StringSplit(vec[i], flag2, vec1);
@@ -197,7 +187,7 @@ void ArrayToString(std::string& out, std::vector<T>& array, char flag = ':')
 	if (!array.empty())
 	{
 		std::ostringstream os;
-		for (size_t i = 0; i < array.size(); ++i)
+		for (size_t i = 0;i < array.size();++i)
 		{
 			os << array[i] << flag;
 		}

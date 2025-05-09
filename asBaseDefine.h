@@ -15,6 +15,40 @@ typedef i64					lint;
 typedef u64					ulint;
 typedef int					bool32;
 
+#if __cplusplus >= 201103L
+#define std11
+#endif
+
+#ifdef std11
+#include <memory>
+#define AS_SHARED_ARRAY std::shared_ptr
+#define AS_SHARED_PTR std::shared_ptr
+#define AS_MAKE_SHARED	std::make_shared
+#else
+#include "boost/smart_ptr.hpp"
+#define AS_SHARED_ARRAY boost::shared_array
+#define AS_SHARED_PTR boost::shared_ptr
+#define AS_MAKE_SHARED boost::make_shared
+#endif
+template<typename T>
+inline AS_SHARED_ARRAY<T> make_shared_array(unsigned int size)
+{
+#ifdef std11
+	return std::shared_ptr<T>(new T[size], std::default_delete<T[]>());
+#else
+	return boost::shared_array<T>(new T[size]);
+#endif
+}
+template<typename T>
+inline AS_SHARED_ARRAY<T> make_shared_array(T* ptr)
+{
+#ifdef std11
+	return std::shared_ptr<T>(ptr, std::default_delete<T[]>());
+#else
+	return boost::shared_array<T>(ptr);
+#endif
+}
+
 #define SAFE_DELETE(p) if(p){delete p; p = nullptr;}
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
@@ -54,9 +88,9 @@ struct asNetTcpMsgHead
 {
 	asNetTcpMsgHead():m_flag(AS_NET_TCP_FLAG),m_len(0),m_msgId(0)
 	{}
-	u32		m_flag;//ï¿½ï¿½Ï¢Í·ï¿½ï¿½Ö¾
-	u32		m_len; // ï¿½ï¿½Ï¢ï¿½å³¤ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½head
-	u32		m_msgId;//ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½
+	u32		m_flag;//ÏûÏ¢Í·±êÖ¾
+	u32		m_len; // ÏûÏ¢Ìå³¤¶È£¬°üÀ¨head
+	u32		m_msgId;//ÏûÏ¢±àºÅ
 };
 
 #endif

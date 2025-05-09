@@ -1,13 +1,13 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
  *
- * ÎÄ ¼ş Ãû:   asTime.h
- * Ãè    Êö:		ÓÃÓÚ»ñÈ¡Ê±¼äºÍÊ±¼ä´Á Ê±¼äÓÉÓÚ´æÔÚUTCÊ±¼äºÍ±¾µØÊ±¼ä£¬Í¨³£±¾µØÊ±¼ä = UTC + Ê±Çø
- *				±ÈÈç±±¾©Ê±¼ä = UTCÊ±¼ä + 8Ğ¡Ê±£¬Ê¹ÓÃgmtime(time_t timestamp)»ñÈ¡µÄtm½á¹¹ÌåÊÇ¸ù¾İtimestamp
- *				¾ö¶¨ÊÇutcÊ±¼ä»¹ÊÇ±¾µØÊ±¼ä¡£
+ * æ–‡ ä»¶ å:   asTime.h
+ * æ    è¿°:		ç”¨äºè·å–æ—¶é—´å’Œæ—¶é—´æˆ³ æ—¶é—´ç”±äºå­˜åœ¨UTCæ—¶é—´å’Œæœ¬åœ°æ—¶é—´ï¼Œé€šå¸¸æœ¬åœ°æ—¶é—´ = UTC + æ—¶åŒº
+ *				æ¯”å¦‚åŒ—äº¬æ—¶é—´ = UTCæ—¶é—´ + 8å°æ—¶ï¼Œä½¿ç”¨gmtime(time_t timestamp)è·å–çš„tmç»“æ„ä½“æ˜¯æ ¹æ®timestamp
+ *				å†³å®šæ˜¯utcæ—¶é—´è¿˜æ˜¯æœ¬åœ°æ—¶é—´ã€‚
  * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/21 22:52
+ * ç‰ˆ    æœ¬ï¼š  V1.0
+ * åˆ› å»º è€…ï¼š  astronauts
+ * åˆ›å»ºæ—¶é—´ï¼š  2025/3/21 22:52
  * ======================================
 *************************************************************************************/
 #ifndef AS_TIME_H
@@ -19,15 +19,15 @@
 #include <time.h>
 #include "../asBaseDefine.h"
 
-// ¸ñÊ½»¯Ê±¼äµÄ×î´ó³¤¶È
+// æ ¼å¼åŒ–æ—¶é—´çš„æœ€å¤§é•¿åº¦
 #define TIME_STR_MAX_LEN 32
 struct YMDHMS
 {
 	Union32 year;
 	Union32 month;
 	Union32 day;
-	Union32 wday; // ÖÜ¼¸
-	Union32 yday; // Ò»ÄêµÄµÚ¼¸Ìì
+	Union32 wday; // å‘¨å‡ 
+	Union32 yday; // ä¸€å¹´çš„ç¬¬å‡ å¤©
 	Union32 hour;
 	Union32 minutes;
 	Union32 second;
@@ -41,51 +41,51 @@ struct YMDHMS
 class asTime
 {
 public:
-	// ´Ó1970.1.1¿ªÊ¼£¬»ñÈ¡µ±Ç°µÄÊ±¼ä´ÁÃë / ºÁÃëMs
+	// ä»1970.1.1å¼€å§‹ï¼Œè·å–å½“å‰çš„æ—¶é—´æˆ³ç§’ / æ¯«ç§’Ms
 	static Union64 GetTimeNow();
 	static Union64 GetTimeNowMs();
-	// »ñÈ¡µ±Ç°Ê±¼ä UTCÊ±¼ä
+	// è·å–å½“å‰æ—¶é—´ UTCæ—¶é—´
 	static tm* GetTime();
 	static tm* GetTime(time_t timestamp);
 	static void GetTime(YMDHMS& t);
 	static void GetTime(time_t timestamp, YMDHMS& t);
 	static time_t GetTimeStamp(YMDHMS& t);
-	// »ñÈ¡±¾µØÊ±¼ä
+	// è·å–æœ¬åœ°æ—¶é—´
 	static tm* GetLocalTime();
 	static tm* GetLocalTime(time_t timestamp);
 	static void GetLocalTime(YMDHMS& t);
 	static void GetLocalTime(time_t timestamp, YMDHMS& t);
-	//¸ñÊ½»¯
+	//æ ¼å¼åŒ–
 	static void GetLocalTimeStr(char* str);
 	static void GetLocalTimeStrYMD(char* str);
 	static void GetLocalTimeStrYMDH(char* str);
 	static void GetLocalTimeStrHMS(char* str);
-	// Ê±¼ä¸ñÊ½³ÉÊı×ÖÀàĞÍ
+	// æ—¶é—´æ ¼å¼æˆæ•°å­—ç±»å‹
 	static Union32 GetDateNum(bool localtime);
 	static Union32 GetTimeNum(bool localtime);
-	//»ñÈ¡0µãÊ±¼ä´Á
+	//è·å–0ç‚¹æ—¶é—´æˆ³
 	static Union64 GetDayZero(time_t timestamp);
-	// »ñÈ¡½ñÌì0µãÊ±¼ä´Á
+	// è·å–ä»Šå¤©0ç‚¹æ—¶é—´æˆ³
 	static Union64 GetTodayZero();
-	// ¼ÆËãÈÕ²îµÄÃë
+	// è®¡ç®—æ—¥å·®çš„ç§’
 	static i32 GetDaySecDiff(time_t day1, time_t day2);
-	// ¼ÆËãÈÕ²îÌìÊı Ã¿ÈÕµÄbegintm×÷ÎªÁÙ½çµã
+	// è®¡ç®—æ—¥å·®å¤©æ•° æ¯æ—¥çš„begintmä½œä¸ºä¸´ç•Œç‚¹
 	static i32 GetDaysDiff(time_t now, time_t last, i32 begintm);
-	// »ñÈ¡´Ó1970Äê¿ªÊ¼µ½timestampÏÖÔÚµÄÌìÊı
+	// è·å–ä»1970å¹´å¼€å§‹åˆ°timestampç°åœ¨çš„å¤©æ•°
 	static u32 GetDays(time_t timestamp);
-	// »ñÈ¡ÖÜÊı
+	// è·å–å‘¨æ•°
 	static u32 GetWeeks(time_t timestamp);
-	// »ñÈ¡ÏµÍ³µÄÊ±Çø£¨Ãë£©
+	// è·å–ç³»ç»Ÿçš„æ—¶åŒºï¼ˆç§’ï¼‰
 	static time_t GetSysTimeZone();
-	// ÉèÖÃÊ±¼äÆ«ÒÆ
+	// è®¾ç½®æ—¶é—´åç§»
 	static void SetTimeOffset(time_t offset) { asTime::s_timeOffset = offset; }
 	static void SetTimeZone(time_t zone) { asTime::s_timeZone = zone; }
 private:
-	static time_t s_timeZone;// Ê±Çø ÓÃ¶«°ËÇø
-	static time_t s_sysZone; // ÏµÍ³ËùÔÚµÄÊ±Çø
-	static time_t s_todayZero; // ½ñÈÕÁãµãÊ±¼ä¡£Ã¿ÌìË¢ĞÂ
-	static time_t s_sysStart; // ½ø³ÌÆô¶¯Ê±¼ä´Á
-	static time_t s_timeOffset; // Ê±¼äÆ«ÒÆÁ¿
+	static time_t s_timeZone;// æ—¶åŒº ç”¨ä¸œå…«åŒº
+	static time_t s_sysZone; // ç³»ç»Ÿæ‰€åœ¨çš„æ—¶åŒº
+	static time_t s_todayZero; // ä»Šæ—¥é›¶ç‚¹æ—¶é—´ã€‚æ¯å¤©åˆ·æ–°
+	static time_t s_sysStart; // è¿›ç¨‹å¯åŠ¨æ—¶é—´æˆ³
+	static time_t s_timeOffset; // æ—¶é—´åç§»é‡
 };
 
 #endif 

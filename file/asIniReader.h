@@ -1,14 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:		asIniReader.h
- * Ãè    Êö:		¶ÁÈ¡ ini ÅäÖÃÎÄ¼ş
- * 
- * °æ    ±¾£º	V1.0
- * ´´ ½¨ Õß£º	astronaut
- * ´´½¨Ê±¼ä£º	2025/4/3 16:17
- * ======================================
-*************************************************************************************/
-#ifndef AS_INIREADER_H
+ï»¿#ifndef AS_INIREADER_H
 #define AS_INIREADER_H
 
 #include "asFileReader.h"
@@ -21,12 +11,12 @@ class asIniReader
 public:
 	asIniReader();
 	~asIniReader();
-	// ´ò¿ªÎÄ¼ş ¼ÓÔØiniÅäÖÃµ½m_cfgÖĞ
+	// æ‰“å¼€æ–‡ä»¶ åŠ è½½inié…ç½®åˆ°m_cfgä¸­
 	bool Open(const char* path);
-	// ÊÇ·ñ´æÔÚÕâ¸ö¿é
+	// æ˜¯å¦å­˜åœ¨è¿™ä¸ªå—
 	bool HasSection(const char* section);
 
-	// »ñÈ¡Êı¾İ
+	// è·å–æ•°æ®
 	std::string& GetString(const char* section, const char* key, const char* defaultV);
 	i32 GetInt32(const char* section, const char* key, i32 defaultV);
 	i64 GetLong(const char* section, const char* key, i64 defaultV);

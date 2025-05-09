@@ -1,17 +1,5 @@
-/*************************************************************************************
- *
- * 文 件 名:   asSingle.h
- * 描    述:		单例模板
- * 
- * 版    本：  V1.0
- * 创 建 者：  astronaut
- * 创建时间：  2024/3/29 13:01
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_SINGLE_H
-#define AS_SINGLE_H
-
+#ifndef __SINGLE_H__
+#define __SINGLE_H__
 #include <mutex>
 #include <memory>
 
@@ -51,5 +39,50 @@ template<class T>
 std::shared_ptr<T> asSingle<T>::single = nullptr;
 template<class T>
 std::mutex asSingle<T>::m_mutex;
+
+template<class T>
+class asSingleton
+{
+protected:
+	asSingleton() = default;
+	asSingleton(const asSingleton<T>& s) = delete;
+	asSingleton& operator=(asSingleton<T>& s) = delete;
+	~asSingleton(){}
+
+public:
+	static T* instance()
+	{
+		if (s_single != nullptr)
+		{
+			return s_single;
+		}
+		s_mutex.lock();
+		if (s_single != nullptr)
+		{
+			s_mutex.unlock();
+			return s_single;
+		}
+		s_single = new T;
+		s_mutex.unlock();
+		return s_single;
+	}
+	static void delete_instance()
+	{
+		s_mutex.lock()
+		if (s_single)
+		{
+			delete s_single;
+			s_single = nullptr;
+		}
+		s_mutex.unlock();
+	}
+private:
+	static T* s_single;
+	static std::mutex s_mutex;
+}; 
+template<class T>
+T* asSingleton<T>::s_single = nullptr;
+template<class T>
+std::mutex asSingleton<T>::s_mutex;
 
 #endif

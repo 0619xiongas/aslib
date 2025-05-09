@@ -1,4 +1,4 @@
-#include "asProcess.h"
+﻿#include "asProcess.h"
 #if _WIN32
 #include <windows.h>
 #include <process.h>

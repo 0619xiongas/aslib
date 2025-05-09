@@ -1,4 +1,4 @@
-#include "asTime.h"
+ï»¿#include "asTime.h"
 #include <chrono>
 #include <cstring>
 
@@ -217,7 +217,7 @@ u32 asTime::GetDays(time_t timestamp)
 
 u32 asTime::GetWeeks(time_t timestamp)
 {
-	//1970Äê1ÔÂ1ÈÕÊÇĞÇÆÚËÄ
+	//1970å¹´1æœˆ1æ—¥æ˜¯æ˜ŸæœŸå››
 	return(GetDays(timestamp) + 3) / 7;
 }
 

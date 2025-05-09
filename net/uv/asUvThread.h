@@ -1,4 +1,4 @@
-#ifndef AS_UVTHREAD_H
+ï»¿#ifndef AS_UVTHREAD_H
 #define AS_UVTHREAD_H
 
 #include "asUvSession.h"
@@ -7,7 +7,7 @@
 #include <stdarg.h>
 
 
-// Ò»¸öthreadÎ¬»¤Ò»¸öloop
+// ä¸€ä¸ªthreadç»´æŠ¤ä¸€ä¸ªloop
 class asUvNetWork;
 
 class asUvThread
@@ -32,9 +32,9 @@ public:
 public:
 	uv_thread_t						m_thread;
 	uv_loop_t*						m_loop;
-	uv_async_t						m_async; //Òì²½ÈÎÎñ´¦Àí
-	uv_timer_t						m_timer; // µ¥ÈÎÎñ¶¨Ê±Æ÷
-	std::function<void()>			m_timerFunc; // ÈÎÎñº¯Êı
+	uv_async_t						m_async; //å¼‚æ­¥ä»»åŠ¡å¤„ç†
+	uv_timer_t						m_timer; // å•ä»»åŠ¡å®šæ—¶å™¨
+	std::function<void()>			m_timerFunc; // ä»»åŠ¡å‡½æ•°
 	uv_idle_t						m_idle;
 private:
 	std::map<u32, asUvSession*>		m_sessions;						

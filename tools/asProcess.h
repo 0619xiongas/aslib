@@ -1,15 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:   asProcess.h
- * Ãè    Êö:		µ±Ç°½ø³ÌÏà¹ØĞÅÏ¢
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/22 12:38
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_PROCESS_H
+ï»¿#ifndef AS_PROCESS_H
 #define AS_PROCESS_H
 #include <string>
 class asProcess
@@ -21,9 +10,9 @@ public:
 	void GetInfo();
 	std::string GetNameNoExtend();
 public:
-	std::string m_fullPath; // ¾ø¶ÔÂ·¾¶
-	std::string m_path;		// ³ÌĞòËùÔÚµÄÂ·¾¶
-	std::string m_name;		// ³ÌĞòÃû
-	long m_pid;				// ½ø³Ìid
+	std::string m_fullPath; // ç»å¯¹è·¯å¾„
+	std::string m_path;		// ç¨‹åºæ‰€åœ¨çš„è·¯å¾„
+	std::string m_name;		// ç¨‹åºå
+	long m_pid;				// è¿›ç¨‹id
 };
 #endif

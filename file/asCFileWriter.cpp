@@ -1,4 +1,4 @@
-#include "asCFileWriter.h"
+ï»¿#include "asCFileWriter.h"
 #include "asPath.h"
 #include "../time/asTime.h"
 
@@ -20,7 +20,7 @@ bool asCFileWriter::Init(const char* path, bool app, bool brief, bool binary)
 	m_app = app;
 	m_brief = brief;
 	m_binary = binary;
-	//´´½¨ÎÄ¼þ¼Ð
+	//åˆ›å»ºæ–‡ä»¶å¤¹
 	std::string dir = asPath::RemoveFileName(path);
 	asPath::MakeDir(dir.c_str());
 
@@ -29,7 +29,7 @@ bool asCFileWriter::Init(const char* path, bool app, bool brief, bool binary)
 		CloseFile();
 	}
 
-	// Ò»Ö±´ò¿ª
+	// ä¸€ç›´æ‰“å¼€
 	if (!m_brief)
 	{
 		if (!OpenFile())

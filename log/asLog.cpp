@@ -2,16 +2,16 @@
 #include <map>
 #include "../time/asTime.h"
 
-static std::map<LOGTYPE, std::string> s_strmp = {
+static std::map<LOGTYPE,std::string> s_strmp = {
 	{LOGTYPE::INFO,"[INFO]"},
 	{LOGTYPE::DEBUG,"[DEBUG]"},
 	{LOGTYPE::WARNING,"[WARNING]"},
-	{LOGTYPE::ERROR,"[ERROR]"},
+	{LOGTYPE::ERROR,"[ERROR]"},	
 };
-asLog::asLog(char sub, const char* path)
+asLog::asLog(char sub,const char* path)
 	:m_subsection(sub)
 {
-	memset(m_lastTime, 0, sizeof(char) * 32);
+	memset(m_lastTime,0,sizeof(char) * 32);
 	m_info.GetInfo();
 	if (path)
 	{
@@ -20,7 +20,7 @@ asLog::asLog(char sub, const char* path)
 	else
 	{
 		m_dir = "./";
-		m_dir += m_info.GetNameNoExtend();
+		m_dir += m_info.m_name.c_str();
 		m_dir += "_logs";
 	}
 }
@@ -37,20 +37,20 @@ void asLog::SetSubSection(char type)
 
 void asLog::Log(LOGTYPE type, const char* str)
 {
-	FormatString(type, str);
+	FormatString(type,str);
 }
 
 void asLog::LogEx(LOGTYPE type, const char* str, ...)
 {
 	va_list va;
-	va_start(va, str);
-	FormatStringEx(type, str, va);
+	va_start(va,str);
+	FormatStringEx(type,str,va);
 	va_end(va);
 }
 
 void asLog::FormatString(LOGTYPE type, const char* str)
 {
-	char ti[11] = { 0 };
+	char ti[11] = {0};
 	asTime::GetLocalTimeStr(ti);
 	if (m_buffer.size())
 	{
@@ -60,7 +60,7 @@ void asLog::FormatString(LOGTYPE type, const char* str)
 	SaveToFile();
 }
 
-void asLog::FormatStringEx(LOGTYPE type, const char* str, va_list& valist)
+void asLog::FormatStringEx(LOGTYPE type, const char* str,va_list& valist)
 {
 	char tmp[LOG_STR_MAX * 2] = { 0 };
 	if (m_buffer.size())
@@ -95,7 +95,7 @@ void asLog::CheckMakeFile()
 {
 	bool make = false;
 	char ti[32] = { 0 };
-	if (m_subsection == 1) //
+	if (m_subsection == 1) //Сʱ
 	{
 		asTime::GetLocalTimeStrYMDH(ti);
 		if (::strcmp(ti, m_lastTime))

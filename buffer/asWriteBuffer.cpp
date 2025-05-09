@@ -1,4 +1,4 @@
-#include "asWriteBuffer.h"
+﻿#include "asWriteBuffer.h"
 
 
 asWriteBuffer::asWriteBuffer()

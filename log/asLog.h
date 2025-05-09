@@ -1,14 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:   asLog.h
- * Ãè    Êö:	  ÈÕÖ¾Êä³ö µ¥Ïß³ÌÀà Ä¿Ç°Ê¹ÓÃµÄÊÇ±ê×¼cĞ´Èë ÇÒÊÇĞ´Ò»´ÎÎÄ¼ş´ò¿ªÒ»´Î
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/29 9:04
- * ======================================
-*************************************************************************************/
-#ifndef AS_LOG_H
+ï»¿#ifndef AS_LOG_H
 #define AS_LOG_H
 #include "../file/asCFileWriter.h"
 #include "../tools/asProcess.h"
@@ -38,12 +28,12 @@ private:
 	void SaveToFile();
 	void CheckMakeFile();
 private:
-	asProcess		m_info;		// ³ÌĞò
-	asCFileWriter	m_cfw;		// ÎÄ¼şĞ´Èë
+	asProcess		m_info;		// ç¨‹åº
+	asCFileWriter	m_cfw;		// æ–‡ä»¶å†™å…¥
 	std::string		m_dir;
-	char 			m_subsection; // ÈÕÖ¾ÎÄ¼ş·ÖÆ¬ÀàĞÍ£¬°´Ìì£¬°´Ğ¡Ê±
-	char			m_lastTime[32]; // ÉÏÒ»´Î´´½¨logÎÄ¼şµÄÊ±¼ä
-	std::string		m_buffer; 	//ÈÕÖ¾»º´æ
+	char 			m_subsection; // æ—¥å¿—æ–‡ä»¶åˆ†ç‰‡ç±»å‹ï¼ŒæŒ‰å¤©ï¼ŒæŒ‰å°æ—¶
+	char			m_lastTime[32]; // ä¸Šä¸€æ¬¡åˆ›å»ºlogæ–‡ä»¶çš„æ—¶é—´
+	std::string		m_buffer; 	//æ—¥å¿—ç¼“å­˜
 };
 
 #endif

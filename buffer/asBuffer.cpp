@@ -1,4 +1,4 @@
-#include "asBuffer.h"
+﻿#include "asBuffer.h"
 
 
 asBuffer::asBuffer()
@@ -156,7 +156,7 @@ bool asBuffer::SubData(ulint offset, ulint len)
 	{
 		if (0 == offset)
 		{
-			m_curSize = len; // ʵ������ûɾ
+			m_curSize = len; // 实际数据没删
 			return true;
 		}
 		else if(offset + len <= m_curSize)
@@ -189,6 +189,16 @@ bool asBuffer::SubSize(ulint size)
 	return false;
 }
 
+bool asBuffer::SetSize(ulint size)
+{
+	if (size < m_maxSize)
+	{
+		m_curSize = size;
+		return true;
+	}
+	return false;
+}
+
 void asBuffer::Clear()
 {
 	m_maxSize = 0;
@@ -198,16 +208,6 @@ void asBuffer::Clear()
 	else
 		m_data = nullptr;
 	m_type = BUFFER_DATA_TYPE::BDT_NULL;
-}
-
-bool asBuffer::SetCurSize(ulint size)
-{
-	if (size < m_maxSize)
-	{
-		m_curSize = size;
-		return true;
-	}
-	return false;
 }
 
 void asBuffer::Copy(const asBuffer& other)

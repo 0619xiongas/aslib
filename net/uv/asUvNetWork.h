@@ -1,4 +1,4 @@
-#ifndef AS_UVNETWORK_H
+ï»¿#ifndef AS_UVNETWORK_H
 #define AS_UVNETWORK_H
 
 #include "asUvThread.h"
@@ -17,60 +17,60 @@ public:
 	bool TryRunNetWork(bool isClient);
 
 	bool TryStopNetWork();
-	// ×÷Îª¿Í»§¶ËÁ¬½Óµ½·şÎñÆ÷
+	// ä½œä¸ºå®¢æˆ·ç«¯è¿æ¥åˆ°æœåŠ¡å™¨
 	u32 ConnectToServer();
-	// ¹Ø±ÕÁ¬½Ó
+	// å…³é—­è¿æ¥
 	void DoCloseSession(u32 sessionId);
-	//·µ»ØÁ¬½Ó¸öÊı
+	//è¿”å›è¿æ¥ä¸ªæ•°
 	u32 GetSessionCount();
 
-	// ·¢ËÍÊı¾İ
+	// å‘é€æ•°æ®
 	void DoSendData(char* buf, u32 len, u32 sessionId);
 	void DoSendDataAll(char* buf, u32 len);
 	void DoSendDataSome(char* buf, u32 len, std::vector<u32>& sessions);
 
-	// ÓĞÏûÏ¢·¢À´
+	// æœ‰æ¶ˆæ¯å‘æ¥
 	virtual void OnNewMessage(asUvSession& session, u32 msgId, char* buf);
 
 protected:
-	// ¼àÌı
+	// ç›‘å¬
 	void StartListen();
 	void HandleListen(uv_loop_t* loop);
-	// ´¦ÀíÁ¬½Ó
+	// å¤„ç†è¿æ¥
 	void DoAccept(u32 id,int status);
 	void HandleAccept(u32 id,uv_loop_t* loop);
 	void HandleAddSession(u32 threadId, asUvSession* session);
-	// ´¦Àí½ÓÊÕÏûÏ¢
+	// å¤„ç†æ¥æ”¶æ¶ˆæ¯
 	void StartReceive(asUvSession* session);
-	//´¦Àí¿Í»§¶Ë¹Ø±Õ
+	//å¤„ç†å®¢æˆ·ç«¯å…³é—­
 	void HandleCloseSession(u32 threadId, u32 sessionId);
-	// ´¦Àí·¢ËÍÊı¾İ
+	// å¤„ç†å‘é€æ•°æ®
 	void HandleSendData(u32 threadId, u32 sessionId, AS_SHARED_ARRAY<char>buf, u32 len);
 	void HandleSendDataAll(u32 threadId, AS_SHARED_ARRAY<char> buf, u32 len);
 	void WriteData(asUvThread* pThread, asUvSession* session, AS_SHARED_ARRAY<char> buf,u32 len);
-	// ´¦ÀíÁ¬½Óserver
+	// å¤„ç†è¿æ¥server
 	void HandleConnectToServer(u32 sessionId,uv_loop_t* loop);
 	void TryConnect(asUvSession* session);
 	void ReConnect(asUvSession* session);
 
-	// virtual ×ÓÀà¿ÉÑ¡ÔñĞÔ¼Ì³Ğ
-	// ĞÂµÄsession
+	// virtual å­ç±»å¯é€‰æ‹©æ€§ç»§æ‰¿
+	// æ–°çš„session
 	virtual void OnAddNewSession(asUvSession& session);
-	// ¹Ø±Õ
+	// å…³é—­
 	virtual void OnCloseSession(u32 sessionId);
 protected:
-	struct sockaddr_in				m_addr;  //±¾µØµØÖ·
-	uv_tcp_t						m_socket; // server¼àÌısocket
+	struct sockaddr_in				m_addr;  //æœ¬åœ°åœ°å€
+	uv_tcp_t						m_socket; // serverç›‘å¬socket
 	std::vector<asUvThread*>		m_threads;
-	u32								m_sendBufSize; // ·¢ËÍ»º³åÇø×î´óÖµ
-	u32								m_recvBufSize; // ½ÓÊÜÊı¾İ×î´óÖµ
-	u32								m_threadCount;// Ïß³ÌÊıÁ¿
-	u32								m_sessionCount;// ×î´óÁ¬½ÓsessionÊıÁ¿
+	u32								m_sendBufSize; // å‘é€ç¼“å†²åŒºæœ€å¤§å€¼
+	u32								m_recvBufSize; // æ¥å—æ•°æ®æœ€å¤§å€¼
+	u32								m_threadCount;// çº¿ç¨‹æ•°é‡
+	u32								m_sessionCount;// æœ€å¤§è¿æ¥sessionæ•°é‡
 
 private:
 	u32								m_sessionIdAlloc;
 	bool							m_isClient;			
-	uv_connect_t					m_connect; // Á¬½Óserver²ÎÊı (×÷Îª¿Í»§¶Ë)
+	uv_connect_t					m_connect; // è¿æ¥serverå‚æ•° (ä½œä¸ºå®¢æˆ·ç«¯)
 };
 
 #endif

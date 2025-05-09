@@ -1,7 +1,7 @@
-#include "asSnowflake.h"
+﻿#include "asSnowflake.h"
 
 asSnowFlake::asSnowFlake()
-	:m_curTime(0), m_timeBegin(AS_SNOW_DEFAULT_TIMEGEBIN), m_seqId(0), m_serverId(0)
+	:m_curTime(0),m_timeBegin(AS_SNOW_DEFAULT_TIMEGEBIN),m_seqId(0),m_serverId(0)
 {
 
 }

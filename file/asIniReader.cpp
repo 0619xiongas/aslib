@@ -1,4 +1,4 @@
-#include "asIniReader.h"
+ï»¿#include "asIniReader.h"
 
 asIniReader::asIniReader()
 {
@@ -27,7 +27,7 @@ bool asIniReader::Open(const char* path)
 			}
 			else if (buf[0] == '[') // section;
 			{
-				for (ulint i = 0; i < size; ++i)
+				for (ulint i = 0;i < size;++i)
 				{
 					if (buf[i] == ']' && i > 0)
 					{
@@ -36,22 +36,22 @@ bool asIniReader::Open(const char* path)
 					}
 				}
 			}
-			else // key = value ,ÕÒ=·ûºÅ£¬È¥³ıkey£¬valueÊ×Î²µÄ¿Õ¸ñ
+			else // key = valueï¼Œ æ‰¾=ç¬¦å·ï¼Œå»é™¤keyï¼Œvalueé¦–å°¾çš„ç©ºæ ¼
 			{
 				key.clear();
 				value.clear();
 				bool find = false;
-				for (ulint i = 0; i < size; ++i)
+				for (ulint i = 0;i < size;++i)
 				{
 					if (buf[i] == '=')
 					{
 						find = true;
 					}
-					if (find && buf[i] != ' ' && buf[i] != '=') // ÕÒvalue
+					if (find && buf[i] != ' ' && buf[i] != '=') // æ‰¾value
 					{
 						value += buf[i];
 					}
-					else if (!find && buf[i] != ' ') // ÕÒ
+					else if(!find && buf[i] != ' ') // æ‰¾
 					{
 						key += buf[i];
 					}

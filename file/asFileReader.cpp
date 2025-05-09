@@ -1,4 +1,4 @@
-#include "asFileReader.h"
+ï»¿#include "asFileReader.h"
 
 asFileReader::asFileReader()
 {
@@ -17,8 +17,7 @@ void asFileReader::SetPath(const char* path)
 void asFileReader::Clear()
 {
 	CloseFile();
-	//asBuffer»á×Ô¼ºÎö¹¹µ÷ÓÃclear,²»ÒªÔÚÕâµ÷ÓÃ£¬Ôì³Édouble free ËäÈ»²»»áÓĞÎÊÌâµ«ÊÇÒª¹æ·¶
-	//m_buffer.Clear(); 
+	//m_buffer.Clear();
 }
 
 bool asFileReader::OpenFile(bool b)
@@ -94,7 +93,7 @@ bool asFileReader::ReadAll()
 		return false;
 	}
 	m_ifs.read(m_buffer.Buf(), size);
-	m_buffer.SetCurSize(size);
+	m_buffer.SetSize(size);
 	return false;
 }
 

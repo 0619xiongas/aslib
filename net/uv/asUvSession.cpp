@@ -1,4 +1,4 @@
-#include "asUvSession.h"
+ï»¿#include "asUvSession.h"
 #include <memory>
 #include "asUvNetWork.h"
 #include "../../buffer/asWriteBuffer.h"
@@ -85,7 +85,7 @@ void asUvSession::OnClose()
 		auto* self = static_cast<asUvSession*>(handle->data);
 		if (self)
 		{
-			delete self; // Êµ¼ÊÎö¹¹ÔÚ´Ë´¦½øĞĞ
+			delete self; // å®é™…ææ„åœ¨æ­¤å¤„è¿›è¡Œ
 		}
 		};
 	uv_read_stop((uv_stream_t*)&m_socket);
@@ -95,13 +95,13 @@ void asUvSession::OnClose()
 void asUvSession::AllocBuf(uv_buf_t* buf)
 {
 	buf->base = m_recvBuf.CurrentBuf();
-	buf->len = m_recvBuf.RemainSize();
+	buf->len = (ULONG)m_recvBuf.RemainSize();
 }
 
-// ½âÎö°üÌå
+// è§£æåŒ…ä½“
 void asUvSession::OnReceiveData()
 {
-	// Õâ±ß¿ÉÒÔ×öÒ»Ğ©ÏûÏ¢½ÓÊÜ´ÎÊı¼ì²â£¬¶ÌÊ±¼äÌ«¶àÁË¾Í¶Ï¿ªÁ¬½Ó ÔİÊ±²»×öÏÈÒÔÖ÷Òª¹¦ÄÜÊµÏÖÎªÖ÷
+	// è¿™è¾¹å¯ä»¥åšä¸€äº›æ¶ˆæ¯æ¥å—æ¬¡æ•°æ£€æµ‹ï¼ŒçŸ­æ—¶é—´å¤ªå¤šäº†å°±æ–­å¼€è¿æ¥ æš‚æ—¶ä¸åšå…ˆä»¥ä¸»è¦åŠŸèƒ½å®ç°ä¸ºä¸»
 	ParseData();
 }
 
@@ -128,25 +128,25 @@ void asUvSession::ParseData()
 		ulint readSize = 0;
 		while (1)
 		{
-			// ³¤¶È²»×ã
+			// é•¿åº¦ä¸è¶³
 			if (len < sizeof(asNetTcpMsgHead))
 			{
 				break;
 			}
-			// ³¤¶ÈÌ«´ó
+			// é•¿åº¦å¤ªå¤§
 			if (len > AS_NET_MAX_LEN)
 			{
 				m_recvBuf.Reset(false);
 				return;
 			}
 			asNetTcpMsgHead* head = (asNetTcpMsgHead*)buf;
-			// ÏûÏ¢Í·²»¶Ô
+			// æ¶ˆæ¯å¤´ä¸å¯¹
 			if (head->m_flag != AS_NET_TCP_FLAG || head->m_len > AS_NET_MAX_LEN || head->m_len < sizeof(asNetTcpMsgHead))
 			{
 				m_recvBuf.Reset(false);
 				return;
 			}
-			// ½â°ü»úÖÆ£¬lenĞ¡ÓÚÍ·µÄlen ¾Í²»¼ÌĞø¶ÁÁË
+			// è§£åŒ…æœºåˆ¶ï¼Œlenå°äºå¤´çš„len å°±ä¸ç»§ç»­è¯»äº†
 			if (len < head->m_len)
 			{
 				break;

@@ -1,16 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:		asBuffer.h
- * Ãè    Êö:		×Ô¶¨Òå»º³åÇø
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2024/5/18 17:53
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_BUFFER_H
-#define AS_BUFFER_H
+ï»¿#pragma once
 #include "../asBaseDefine.h"
 #include <cstring>
 
@@ -18,8 +6,8 @@
 enum class BUFFER_DATA_TYPE
 {
 	BDT_NULL = 0,
-	BDT_EXTERNAL = 1, // Íâ²¿´«ÈëµÄ¿Õ¼ä
-	BDT_NEED_NEW = 2, // ÄÚ²¿¿ª±Ù¿Õ¼ä
+	BDT_EXTERNAL = 1, // å¤–éƒ¨ä¼ å…¥çš„ç©ºé—´
+	BDT_NEED_NEW = 2, // å†…éƒ¨å¼€è¾Ÿç©ºé—´
 };
 class asBuffer
 {
@@ -30,48 +18,47 @@ public:
 	void operator = (const asBuffer& other);
 	~asBuffer();
 
-	// ÄÚ²¿³õÊ¼»¯Ò»¿éÄÚ´æ
+	// å†…éƒ¨åˆå§‹åŒ–ä¸€å—å†…å­˜
 	bool Init(ulint size, BUFFER_DATA_TYPE type = BUFFER_DATA_TYPE::BDT_NEED_NEW);
-	// Íâ²¿µÄÄÚ´æ
+	// å¤–éƒ¨çš„å†…å­˜
 	bool Init(char* data, ulint size);
-	// µ±Ç°size
+	// å½“å‰size
 	ulint Size() const;
-	// ×î´ósize
+	// æœ€å¤§size
 	ulint MaxSize() const;
-	// m_dataµØÖ·
+	// m_dataåœ°å€
 	char* Buf() const;
-	// µ±Ç°¿ÉÓÃ»º´æµÄµØÖ·
+	// å½“å‰å¯ç”¨ç¼“å­˜çš„åœ°å€
 	char* CurrentBuf();
-	// »º´æĞ´Èëdata
+	// ç¼“å­˜å†™å…¥data
 	bool WriteBuf(const void* data, ulint len);
-	// ÖØĞÂ·ÖÅä´óĞ¡ Ò»°ãÓÃÓÚÀ©Èİ
+	// é‡æ–°åˆ†é…å¤§å° ä¸€èˆ¬ç”¨äºæ‰©å®¹
 	bool Resize(ulint newLen, bool saveData);
-	// »º´æÊÇ·ñÂúÁË
+	// ç¼“å­˜æ˜¯å¦æ»¡äº†
 	bool IsFull() const;
-	//Buf Êı¾İµØÖ·À´Ô´
+	//Buf æ•°æ®åœ°å€æ¥æº
 	i32 BufType() const;
-	// bufÇ°ÒÆ
+	// bufå‰ç§»
 	bool MoveDataForWard(ulint offset);
-	// Êı¾İÇå¿Õ
+	// æ•°æ®æ¸…ç©º
 	void Reset(bool Zero = false);
-	// ¿ÉÓÃ¿Õ¼ä
+	// å¯ç”¨ç©ºé—´
 	ulint RemainSize() const;
-	// ²Ã¼ôÊı¾İ
+	// è£å‰ªæ•°æ®
 	bool SubData(ulint offset, ulint len);
 
 	bool AddSize(ulint size);
 
 	bool SubSize(ulint size);
 
-	void Clear();
+	bool SetSize(ulint size);
 
-	bool SetCurSize(ulint size);
+	void Clear();
 private:
-	// ¿½±´
+	// æ‹·è´
 	void Copy(const asBuffer& other);
 	char* m_data;
 	u64 m_maxSize;
 	u64 m_curSize;
 	BUFFER_DATA_TYPE m_type = BUFFER_DATA_TYPE::BDT_NULL;
 };
-#endif

@@ -1,15 +1,4 @@
-/*************************************************************************************
- *
- * Œƒ º˛ √˚:   asDBDataUtils.hpp
- * √Ë     ˆ:		Data ˝æ›
- * 
- * ∞Ê    ±æ£∫  V1.0
- * ¥¥ Ω® ’ﬂ£∫  astronaut
- * ¥¥Ω® ±º‰£∫  2025/4/4 10:29
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_DBDATAUTILS_H
+Ôªø#ifndef AS_DBDATAUTILS_H
 #define AS_DBDATAUTILS_H
 
 #include <map>
@@ -22,7 +11,7 @@ public:
 	template<typename T>
 	static std::string ToDBString(const T& v)
 	{
-		return v.SerializeDBString(); // DBData¿‡–Ë“™ µœ÷∏√∑Ω∑®
+		return v.SerializeDBString(); // DBDataÁ±ªÈúÄË¶ÅÂÆûÁé∞ËØ•ÊñπÊ≥ï
 	}
 	static std::string ToDBString(i64 v)
 	{
@@ -65,7 +54,7 @@ public:
 		std::vector<std::string> vec;
 		StringSplit(str, ',', vec);
 		out.resize(vec.size());
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			DBStringTo(vec[i], &out[i]);
 		}
@@ -74,7 +63,7 @@ public:
 	static std::string SerializeDBString(const std::vector<T>& vec)
 	{
 		std::string res;
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			if (i != 0)
 			{
@@ -94,7 +83,7 @@ public:
 		T t;
 		std::vector<std::string> vec;
 		StringSplit(str, ',', vec);
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			DBStringTo(vec[i], &t);
 			out.insert(t);
@@ -104,7 +93,7 @@ public:
 	static std::string SerializeDBString(const std::set<T>& s)
 	{
 		std::string res;
-		for (auto it = s.begin(); it != s.end(); ++it)
+		for (auto it = s.begin();it != s.end();++it)
 		{
 			if (it != s.begin())
 			{
@@ -125,7 +114,7 @@ public:
 		std::vector<std::string> vec;
 		StringSplit(str, ',', vec);
 		out.reserve(vec.size());
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			std::vector<std::string> subVec;
 			StringSplit(str, ':', subVec);
@@ -142,7 +131,7 @@ public:
 	static std::string SerializeDBString(const std::vector<std::pair<T1, T2>>& vec)
 	{
 		std::string res;
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			if (i != 0)
 			{
@@ -164,7 +153,7 @@ public:
 		T1 t;
 		std::vector<std::string> vec;
 		StringSplit(str, ',', vec);
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			std::vector<std::string> subVec;
 			StringSplit(str, ':', subVec);
@@ -180,7 +169,7 @@ public:
 	static std::string SerializeDBString(const std::map<T1, T2>& mp)
 	{
 		std::string res;
-		for (auto it = mp.begin(); it != mp.end(); ++it)
+		for (auto it = mp.begin();it != mp.end();++it)
 		{
 			if (it != mp.begin())
 			{
@@ -203,7 +192,7 @@ public:
 		std::pair<T2, T3> p;
 		std::vector<std::string >vec;
 		StringSplit(str, ',', vec);
-		for (size_t i = 0; i < vec.size(); ++i)
+		for (size_t i = 0;i < vec.size();++i)
 		{
 			std::vector<std::string >subVec;
 			StringSplit(str, ':', subVec);
@@ -227,7 +216,7 @@ public:
 	static std::string SerializeDBString(const std::map<T1, std::pair<T2, T3>>& mp)
 	{
 		std::string res;
-		for (auto it = mp.begin(); it != mp.end(); ++it)
+		for (auto it = mp.begin();it != mp.end();++it)
 		{
 			if (it != mp.begin())
 			{
@@ -246,7 +235,7 @@ public:
 	template<typename T>
 	static void ParseDBBlob(const std::string& blob, std::vector<T>& out)
 	{
-
+		
 	}
 
 };

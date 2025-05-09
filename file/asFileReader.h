@@ -1,46 +1,36 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:		asFileReader.h
- * Ãè    Êö:		¶ÁÈ¡ÎÄ¼şÊı¾İ
- * 
- * °æ    ±¾£º	V1.0
- * ´´ ½¨ Õß£º	astronaut
- * ´´½¨Ê±¼ä£º	2025/4/3 10:10
- * ======================================
-*************************************************************************************/
-#ifndef AS_FILEREADER_H
+ï»¿#ifndef AS_FILEREADER_H
 #define AS_FILEREADER_H
 #include "../buffer/asBuffer.h"
 #include <fstream>
 
-// ¶ÁÈ¡ÎÄ¼ş´æÈëbufferÖĞ ¿É×÷Îª»ùÀà
+// è¯»å–æ–‡ä»¶å­˜å…¥bufferä¸­ å¯ä½œä¸ºåŸºç±»
 class asFileReader
 {
 public:
-	asFileReader();
-	~asFileReader();
+    asFileReader();
+    ~asFileReader();
 
-	void SetPath(const char* path);
+    void SetPath(const char* path);
 
-	void Clear();
+    void Clear();
 
-	bool OpenFile(bool b = false);
+    bool OpenFile(bool b = false);
 
-	void CloseFile();
-	// »ñÈ¡ÎÄ¼ş´óĞ¡
-	ulint GetFileSize();
-	// ´ÓÎÄ¼ş»ñÈ¡Ò»ĞĞÊı¾İ£¬´«Èëµ½bufferÖĞ
-	bool GetLine();
-	// ¶ÁÈ¡ÎÄ¼şÊı¾İµ½ÄÚ²¿»º³åÇø
-	bool ReadAll();
+    void CloseFile();
+    // è·å–æ–‡ä»¶å¤§å°
+    ulint GetFileSize();
+    // ä»æ–‡ä»¶è·å–ä¸€è¡Œæ•°æ®ï¼Œä¼ å…¥åˆ°bufferä¸­
+    bool GetLine();
+    // è¯»å–æ–‡ä»¶æ•°æ®åˆ°å†…éƒ¨ç¼“å†²åŒº
+    bool ReadAll();
 
-	asBuffer& GetInnerBuffer();
+    asBuffer& GetInnerBuffer();
 private:
-	bool CreateBuffer();
+    bool CreateBuffer();
 private:
-	asBuffer        m_buffer; // ÄÚ²¿»º³åÇø
-	std::string     m_path;
-	std::ifstream   m_ifs;
+    asBuffer        m_buffer; // å†…éƒ¨ç¼“å†²åŒº
+    std::string     m_path;
+    std::ifstream   m_ifs;
 };
 
 #endif

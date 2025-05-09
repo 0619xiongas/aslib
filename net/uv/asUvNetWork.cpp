@@ -1,4 +1,4 @@
-#include "asUvNetWork.h"
+ï»¿#include "asUvNetWork.h"
 
 asUvNetWork::asUvNetWork()
 	:m_addr(),m_socket(), m_sendBufSize(1024 * 10), m_recvBufSize(1024 * 10), m_threadCount(1), m_sessionCount(100),
@@ -152,7 +152,7 @@ void asUvNetWork::DoSendDataAll(char* buf, u32 len)
 	if (!m_threads.empty())
 	{
 		AS_SHARED_ARRAY<char> data = make_shared_array<char>(buf);
-		for (size_t i = 0;i < m_threadCount;++i)
+		for (u32 i = 0;i < m_threadCount;++i)
 		{
 			m_threads[i]->PostEvent([this, i, data, len]() {
 				this->HandleSendDataAll(i, data, len);
@@ -196,11 +196,11 @@ void asUvNetWork::HandleListen(uv_loop_t* loop)
 {
 	uv_tcp_init(loop, &this->m_socket);
 	uv_tcp_bind(&this->m_socket, (const struct sockaddr*)&m_addr, 0);
-	// ĞèÒªÊµÏÖÒ»¸öC·ç¸ñµÄuv_connection_cb
+	// éœ€è¦å®ç°ä¸€ä¸ªCé£æ ¼çš„uv_connection_cb
 	this->m_socket.data = this;
 	i32 r = uv_listen((uv_stream_t*)&this->m_socket, 128, [](uv_stream_t* server,int status) {
 		auto self = static_cast<asUvNetWork*>(server->data);
-		// ¾ßÌå×ö
+		// å…·ä½“åš
 		u32 id = ++self->m_sessionIdAlloc;
 		self->DoAccept(id, status);
 		});
@@ -263,7 +263,7 @@ void asUvNetWork::StartReceive(asUvSession* session)
 				asUvSession* session = static_cast<asUvSession*>(handle->data);
 				if (session)
 				{
-					session->AllocBuf(buf); // ·ÖÅä¿Õ¼ä
+					session->AllocBuf(buf); // åˆ†é…ç©ºé—´
 				}
 			},
 			[](uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) 
@@ -325,23 +325,23 @@ void asUvNetWork::WriteData(asUvThread* pThread, asUvSession* session, AS_SHARED
 {
 	if (!pThread || !session)
 		return;
-	// ÔÚ·¢ËÍ¹ı³ÌÖĞ
+	// åœ¨å‘é€è¿‡ç¨‹ä¸­
 	if (session->m_pending)
 	{
 		session->m_sendQueue.Push(buf, len);
 	}
-	else/* if (!session->m_sendQueue.m_que.empty())*/ //½«Êı¾İºÏ²¢ÆğÀ´·¢ËÍ
+	else/* if (!session->m_sendQueue.m_que.empty())*/ //å°†æ•°æ®åˆå¹¶èµ·æ¥å‘é€
 	{
 		session->m_sendQueue.Push(buf, len);
 		session->m_sendQueue.MergeQueue2Buf(session->m_sendBuf);
 		session->m_pending = true;
 
 		pThread->PostEvent([this, session]() {
-			uv_buf_t data = uv_buf_init(session->m_sendBuf.Buf(), session->m_sendBuf.Size());
+			uv_buf_t data = uv_buf_init(session->m_sendBuf.Buf(), (u32)session->m_sendBuf.Size());
 			uv_write(&(session->m_req), (uv_stream_t*)&(session->m_socket), &data, 1, 
 				[](uv_write_t* req, int status)
 				{
-					// »Øµ÷ÖĞĞèÒª´¦ÀísendBuf
+					// å›è°ƒä¸­éœ€è¦å¤„ç†sendBuf
 					asUvSession* session = static_cast<asUvSession*>(req->data);
 					if (session)
 					{

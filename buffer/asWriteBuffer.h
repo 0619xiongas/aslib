@@ -1,16 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:		asWriteBuffer.h
- * Ãè    Êö:		Ğ´Èë»º³åÇø
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2024/5/26 10:42
- * ======================================
-*************************************************************************************/
-
-#ifndef AS_WRITEBUFFER_H
-#define AS_WRITEBUFFER_H
+ï»¿#pragma once
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
@@ -25,51 +13,51 @@ public:
 	~asWriteBuffer();
 	void operator= (const asWriteBuffer& other);
 
-	//ÄÚ²¿newÒ»¸öbuffer
+	//å†…éƒ¨newä¸€ä¸ªbuffer
 	bool Set(u32 size, BUFFER_DATA_TYPE type = BUFFER_DATA_TYPE::BDT_NEED_NEW);
 
-	// Íâ²¿´«Èë
+	// å¤–éƒ¨ä¼ å…¥
 	bool Set(char* data, u32 size);
 
-	// Ìø¹ıÒ»¶Î³¤¶È
+	// è·³è¿‡ä¸€æ®µé•¿åº¦
 	inline bool Skip(ulint size)
 	{
 		return m_buffer.AddSize(size);
 	}
-	// »º´æµØÖ·
+	// ç¼“å­˜åœ°å€
 	inline char* Buf()
 	{
 		return m_buffer.Buf();
 	}
-	// ÖØĞÂĞ´Èë
+	// é‡æ–°å†™å…¥
 	inline void Reset()
 	{
 		m_buffer.Reset();
 	}
-	// Ğ´ÈëµÄ´óĞ¡
+	// å†™å…¥çš„å¤§å°
 	inline ulint Size()
 	{
 		return m_buffer.Size();
 	}
-	// Ê£Óà¿Õ¼ä
+	// å‰©ä½™ç©ºé—´
 	inline ulint RemainSize()
 	{
 		return m_buffer.RemainSize();
 	}
-	// ×î´ó»º´æ´óĞ¡
+	// æœ€å¤§ç¼“å­˜å¤§å°
 	inline ulint MaxSize()
 	{
 		return m_buffer.MaxSize();
 	}
-	// µ±Ç°µØÖ·
+	// å½“å‰åœ°å€
 	inline char* CurrentBuf()
 	{
 		return m_buffer.CurrentBuf();
 	}
-	// ÖØĞÂ·ÖÅä´óĞ¡
+	// é‡æ–°åˆ†é…å¤§å°
 	bool ReSize(ulint size);
 
-	// ÊÍ·Å
+	// é‡Šæ”¾
 	void Clear();
 
 	// Write
@@ -83,7 +71,7 @@ public:
 	inline bool WriteU64(u64 data) { return _Write(&data, sizeof(u64)); }
 	inline bool WriteU16(u16 data) { return _Write(&data, sizeof(u16)); }
 	inline bool WriteI16(i16 data) { return _Write(&data, sizeof(i16)); }
-	// ²»´ø³¤¶ÈÊı¾İ
+	// ä¸å¸¦é•¿åº¦æ•°æ®
 	inline bool WriteData(const void* data, ulint size){return _Write(data, size);}
 	inline asWriteBuffer& operator<<(u8 data) { WriteUChar(data); return *this; }
 	inline asWriteBuffer& operator<<(i8 data) { WriteChar(data); return *this; }
@@ -97,7 +85,7 @@ public:
 	inline asWriteBuffer& operator<<(f64 data) { WriteDouble(data); return *this;}
 	inline asWriteBuffer& operator<<(const std::string& str) { WriteString(str); return *this;}
 	inline asWriteBuffer& operator<<(const char* str) { WriteString(str); return *this; }
-	// ´øËÄ×Ö½Ú³¤¶ÈÊı¾İ
+	// å¸¦å››å­—èŠ‚é•¿åº¦æ•°æ®
 	bool WriteString(std::string str);
 	bool WriteString(const char* data, ulint size);
 	bool WriteStruct(const void* data, ulint size);
@@ -106,4 +94,3 @@ private:
 	bool _Write(const void* data, ulint size);
 	asBuffer m_buffer;
 };
-#endif

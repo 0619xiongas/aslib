@@ -1,14 +1,4 @@
-/*************************************************************************************
- *
- * ÎÄ ¼þ Ãû:   asSnowFlake.h
- * Ãè    Êö:		Ñ©»¨Ëã·¨
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/29 9:16
- * ======================================
-*************************************************************************************/
-#ifndef AS_SNOWFLAKE_H
+ï»¿#ifndef AS_SNOWFLAKE_H
 #define AS_SNOWFLAKE_H
 
 #include <time.h>
@@ -18,13 +8,12 @@
 #define AS_SNOW_DEFAULT_TIMEGEBIN 1742954400 //2025-3-26 10:00:00
 #define AS_SNOW_SEQ_MAX 1048576	
 
-// 32Î»Ê±¼ä´Á+12Î»·þÎñÆ÷id+20Î»×ÔÔöÖµ
 class asSnowFlake
 {
 public:
 	asSnowFlake();
 	~asSnowFlake();
-		
+
 	bool Init(u16 serverId, time_t timeBegin = AS_SNOW_DEFAULT_TIMEGEBIN);
 
 	i64 GetId();

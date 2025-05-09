@@ -1,4 +1,4 @@
-#include "asReadBuffer.h"
+ï»¿#include "asReadBuffer.h"
 
 asReadBuffer::asReadBuffer()
 	:m_pos(0)
@@ -37,7 +37,7 @@ bool asReadBuffer::ReadString(std::string& str)
 		str.clear();
 		if (len == 0)
 		{
-			return true; // ¿ÕÊı¾İ
+			return true; // ç©ºæ•°æ®
 		}
 		else
 		{

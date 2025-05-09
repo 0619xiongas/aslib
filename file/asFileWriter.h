@@ -1,11 +1,11 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
  *
- * ÎÄ ¼ş Ãû:   asFileWriter.h
- * Ãè    Êö:		Ğ´ÈëÎÄ¼ş ²ÉÓÃc++±ê×¼ÎÄ¼şÁ÷
+ * æ–‡ ä»¶ å:   asFileWriter.h
+ * æ    è¿°:		å†™å…¥æ–‡ä»¶ é‡‡ç”¨c++æ ‡å‡†æ–‡ä»¶æµ
  * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2025/3/24 22:30
+ * ç‰ˆ    æœ¬ï¼š  V1.0
+ * åˆ› å»º è€…ï¼š  astronauts
+ * åˆ›å»ºæ—¶é—´ï¼š  2025/3/24 22:30
  * ======================================
 *************************************************************************************/
 #ifndef AS_FILEWRITER_H
@@ -20,20 +20,20 @@ class asFileWriter
 public:
 	asFileWriter();
 	~asFileWriter();
-	// ³õÊ¼»¯»òÕßÖØÖÃ
+	// åˆå§‹åŒ–æˆ–è€…é‡ç½®
 	bool Init(const char* path, bool app, bool brief, bool binary);
-	// end Ìí¼Ó"\n" time ÊÇ·ñĞèÒªÌí¼ÓÊ±¼äĞÅÏ¢
+	// end æ·»åŠ "\n" time æ˜¯å¦éœ€è¦æ·»åŠ æ—¶é—´ä¿¡æ¯
 	bool WriteString(const char* str, bool end, bool time);
 	bool WriteBytes(const char* bytes, u32 len);
 	bool OpenFile();
 	void CloseFile();
 
 private:
-	bool 			m_app;		// ÎÄ¼ş×·¼ÓĞ´ std::ios::app,Ä¬ÈÏstd::ios::ate
-	bool 			m_brief;	// ÊÇ·ñĞ´ÍêÁ¢¼´¹Ø±Õ
-	bool 			m_binary;	// ÊÇ·ñÊÇ¶ş½øÖÆÎÄ¼ş
-	std::string 	m_path;		// ÎÄ¼şÂ·¾¶
-	std::ofstream 	m_fs; 		// ÎÄ¼şĞ´ÈëÁ÷
+	bool 			m_app;		// æ–‡ä»¶è¿½åŠ å†™ std::ios::app,é»˜è®¤std::ios::ate
+	bool 			m_brief;	// æ˜¯å¦å†™å®Œç«‹å³å…³é—­
+	bool 			m_binary;	// æ˜¯å¦æ˜¯äºŒè¿›åˆ¶æ–‡ä»¶
+	std::string 	m_path;		// æ–‡ä»¶è·¯å¾„
+	std::ofstream 	m_fs; 		// æ–‡ä»¶å†™å…¥æµ
 };
 
 #endif

@@ -1,21 +1,20 @@
-#ifndef AS_UVSESSION_H
+ï»¿#ifndef AS_UVSESSION_H
 #define AS_UVSESSION_H
 #include "uv.h"
 #include <string>
 #include "../../buffer/asBuffer.h"
-#include "../asNetDefine.h"
 #include <deque>
 
 /*
-* Á¬½ÓĞÅÏ¢Àà£¬ĞèÒª×öµÄ²Ù×÷¾ÍÊÇÎ¬»¤Ò»¸ö·¢ËÍÊı¾İ¶ÓÁĞºÍÒ»¸ö½ÓÊÜÊı¾İ»º´æ
+* è¿æ¥ä¿¡æ¯ç±»ï¼Œéœ€è¦åšçš„æ“ä½œå°±æ˜¯ç»´æŠ¤ä¸€ä¸ªå‘é€æ•°æ®é˜Ÿåˆ—å’Œä¸€ä¸ªæ¥å—æ•°æ®ç¼“å­˜
 */
 struct asSendQueue
 {
 	asSendQueue();
 	~asSendQueue();
-	//½ø¶Ó
+	//è¿›é˜Ÿ
 	void Push(AS_SHARED_ARRAY<char>& data,u32 len);
-	// ³ö¶Ó
+	// å‡ºé˜Ÿ
 	void Pop();
 	void Clear();
 	void MergeQueue2Buf(asBuffer& buffer);
@@ -38,27 +37,27 @@ public:
 
 	u32 GetId();
 
-	// ĞèÒªÍ¨ÖªÊ¹ÓÃnetwork½øĞĞ¹Ø±Õ
+	// éœ€è¦é€šçŸ¥ä½¿ç”¨networkè¿›è¡Œå…³é—­
 	void Close();
 	void OnClose();
 	void AllocBuf(uv_buf_t* buf);
-	// uv_read_cbÖĞµ÷ÓÃ
+	// uv_read_cbä¸­è°ƒç”¨
 	void OnReceiveData();
-	// uv_write_cbµôÓÃ
+	// uv_write_cbæ‰ç”¨
 	void OnWriteDataCB(int ret);
 protected:
 	virtual void ParseData();
 
 private:
-	struct sockaddr_in		m_addr;	//µØÖ·
-	asBuffer				m_recvBuf; //Êı¾İ½ÓÊÜ»º´æ
-	asBuffer				m_sendBuf; //Êı¾İ·¢ËÍ
-	bool					m_pending; // ÊÇ·ñÔÚ·¢ËÍ¹ı³ÌÖĞ
-	uv_tcp_t				m_socket;// Á¬½Ó
-	asSendQueue				m_sendQueue;//·¢ËÍ¶ÓÁĞ
-	u32						m_sessionId;//Á¬½Ó±àºÅ
+	struct sockaddr_in		m_addr;	//åœ°å€
+	asBuffer				m_recvBuf; //æ•°æ®æ¥å—ç¼“å­˜
+	asBuffer				m_sendBuf; //æ•°æ®å‘é€
+	bool					m_pending; // æ˜¯å¦åœ¨å‘é€è¿‡ç¨‹ä¸­
+	uv_tcp_t				m_socket;// è¿æ¥
+	asSendQueue				m_sendQueue;//å‘é€é˜Ÿåˆ—
+	u32						m_sessionId;//è¿æ¥ç¼–å·
 	asUvNetWork*			m_netWork;
-	uv_write_t				m_req; // ·¢ËÍÊı¾İÇëÇó
+	uv_write_t				m_req; // å‘é€æ•°æ®è¯·æ±‚
 };
 
 

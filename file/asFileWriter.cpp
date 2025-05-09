@@ -1,4 +1,4 @@
-#include "asFileWriter.h"
+ï»¿#include "asFileWriter.h"
 #include "asPath.h"
 #include "../time/asTime.h"
 
@@ -15,15 +15,15 @@ bool asFileWriter::Init(const char* path, bool app, bool brief, bool binary)
 	m_app = app;
 	m_brief = brief;
 	m_binary = binary;
-	//´´½¨ÎÄ¼ş¼Ğ
+	//åˆ›å»ºæ–‡ä»¶å¤¹
 	std::string dir = asPath::RemoveFileName(path);
 	asPath::MakeDir(dir.c_str());
-	// È·±£ÎÄ¼ş¹Ø±Õ
+	// ç¡®ä¿æ–‡ä»¶å…³é—­
 	if (m_fs.is_open())
 	{
 		CloseFile();
 	}
-	// Ò»Ö±´ò¿ªÎÄ¼şÁ÷
+	// ä¸€ç›´æ‰“å¼€æ–‡ä»¶æµ
 	if (!m_brief)
 	{
 		if (!OpenFile())
@@ -41,7 +41,7 @@ asFileWriter::~asFileWriter()
 
 bool asFileWriter::WriteString(const char* str, bool end, bool time)
 {
-	if (m_brief) // ĞèÒªÖØĞÂ´ò¿ªÎÄ¼ş
+	if (m_brief) // éœ€è¦é‡æ–°æ‰“å¼€æ–‡ä»¶
 	{
 		OpenFile();
 	}
@@ -57,8 +57,8 @@ bool asFileWriter::WriteString(const char* str, bool end, bool time)
 		buf = "[";
 		buf += tstr;
 		buf += "]";
+		buf += str;
 	}
-	buf += str;
 	m_fs << buf;
 	if (end)
 	{
@@ -73,7 +73,7 @@ bool asFileWriter::WriteString(const char* str, bool end, bool time)
 
 bool asFileWriter::WriteBytes(const char* bytes, u32 len)
 {
-	if (m_brief) // ĞèÒªÖØĞÂ´ò¿ªÎÄ¼ş
+	if (m_brief) // éœ€è¦é‡æ–°æ‰“å¼€æ–‡ä»¶
 	{
 		OpenFile();
 	}

@@ -1,32 +1,20 @@
-/*************************************************************************************
- *
- * ÎÄ ¼ş Ãû:		asReadBuffer.h
- * Ãè    Êö:		¶ÁÈ¡»º³åÇø
- * 
- * °æ    ±¾£º  V1.0
- * ´´ ½¨ Õß£º  astronaut
- * ´´½¨Ê±¼ä£º  2024/5/26 9:05
- * ======================================
-*************************************************************************************/
-#ifndef AS_READBUFFER_H
-#define AS_READBUFFER_H
-
+ï»¿#pragma once
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
 
-// ¶ÁÈ¡BufferÖĞµÄÊı¾İ
+// è¯»å–Bufferä¸­çš„æ•°æ®
 class asReadBuffer
 {
 public:
 	asReadBuffer();
 	asReadBuffer(const char* source,ulint size);
 	~asReadBuffer();
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	void Set(const char* source, ulint size);
-	// Ìø¹ıÖ¸¶¨´óĞ¡×Ö½ÚÊı¾İ
+	// è·³è¿‡æŒ‡å®šå¤§å°å­—èŠ‚æ•°æ®
 	void Skip(ulint size);
-	// ÊÇ·ñÊÇ¿Õ
+	// æ˜¯å¦æ˜¯ç©º
 	bool IsEmpty();
 	inline bool ReadUChar(u8& data)				{ return _Read(&data, sizeof(u8)); }
 	inline const u8* ReadUChar()				{ return (const u8*)_Read(sizeof(u8)); }
@@ -63,7 +51,7 @@ public:
 	inline asReadBuffer& operator>>(std::string& str) { ReadString(str); return *this; }
 
 
-	// ReadString stringÇ°´ø4×Ö½Ú³¤¶È
+	// ReadString stringå‰å¸¦4å­—èŠ‚é•¿åº¦
 	bool ReadString(std::string& str);
 	u32 ReadString(char* data, u32 size);
 	u32 ReadStruct(void* data, u32 size);
@@ -89,6 +77,5 @@ private:
 	bool _Read(void* data, ulint size);
 	const char* _Read(ulint size);
 	asBuffer	m_buf;
-	ulint		m_pos;	// ÒÑ¶ÁµÄ´óĞ¡
+	ulint		m_pos;	// å·²è¯»çš„å¤§å°
 };
-#endif // !AS_READBUFFER_H
