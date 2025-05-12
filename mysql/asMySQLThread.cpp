@@ -18,7 +18,8 @@ bool asMySQLThread::Connect2DB(const std::string& host, const std::string& user,
 	{
 		return false;
 	}
-	mysql_options(m_conn, MYSQL_OPT_RECONNECT, "1");
+	my_bool reconn = 1;
+	mysql_options(conn, MYSQL_OPT_RECONNECT, &reconn);
 	if (mysql_real_connect(conn, host.c_str(), user.c_str(), pwd.c_str(), db.c_str(), port, NULL, 0) == 0)
 	{
 		i32 error = mysql_errno(conn);
@@ -159,26 +160,29 @@ void asMySQLThread::ThreadFunc()
 		}
 	}
 	// 需要退出，执行完剩余task
-	auto itr = m_tasks.begin();
-	for (;itr != m_tasks.end();++itr)
+	if (m_tasks.size())
 	{
-		i32 r = HandleOneTask(*itr);
-		switch (r)
+		auto itr = m_tasks.begin();
+		for (;itr != m_tasks.end();++itr)
 		{
-		case 1:
-			itr->res->m_error = itr->sql;
-			itr->res->m_error += ",";
-			itr->res->m_error += mysql_error(m_conn);
-			itr->res->m_success = false;
-			if (m_addResultFunc)
-				m_addResultFunc(*itr);
-			break;
-		case 0:
-			if (m_addResultFunc)
-				m_addResultFunc(*itr);
-			break;
-		case -1:
-			break;
+			i32 r = HandleOneTask(*itr);
+			switch (r)
+			{
+			case 1:
+				itr->res->m_error = itr->sql;
+				itr->res->m_error += ",";
+				itr->res->m_error += mysql_error(m_conn);
+				itr->res->m_success = false;
+				if (m_addResultFunc)
+					m_addResultFunc(*itr);
+				break;
+			case 0:
+				if (m_addResultFunc)
+					m_addResultFunc(*itr);
+				break;
+			case -1:
+				break;
+			}
 		}
 	}
 	if (m_conn && m_exit)

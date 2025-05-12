@@ -1,12 +1,15 @@
 ﻿#include "asMySQLQuery.h"
 asMySQLQueryMgr::asMySQLQueryMgr()
-	:m_threadCount(0),m_conn(nullptr)
+	:m_threadCount(0),m_conn(nullptr),m_close(false)
 {
 }
 
 asMySQLQueryMgr::~asMySQLQueryMgr()
 {
-	this->Close();
+	if (!m_close)
+	{
+		this->Close();
+	}
 }
 
 bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, const std::string& pwd, const std::string& db, u16 port, u32 threadCount)
@@ -35,14 +38,23 @@ bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, con
 		for (size_t i = 0; i < m_threadCount;++i)
 		{
 			asMySQLThread* thread = new asMySQLThread(std::bind(&asMySQLQueryMgr::AddResult, this, std::placeholders::_1));
+			if (!thread || !thread->StartThread())
+			{
+				delete thread;
+				thread = nullptr;
+				continue;
+			}
 			if (!thread->Connect2DB(host, user, pwd, db, port))
 			{
 				delete thread;
 				thread = nullptr;
 			}
+			std::wstring name = L"mysql thread";
+			name += std::to_wstring(i);
+			thread->SetThreadName("", name.c_str());
 			m_threads.push_back(thread);
 		}
-		if (!m_threads.empty())
+		if (m_threads.empty())
 		{
 			//log and print .... 
 			return false;
@@ -53,6 +65,7 @@ bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, con
 
 void asMySQLQueryMgr::Close()
 {
+	m_close = true;
 	if (m_conn)
 	{
 		mysql_close(m_conn);
@@ -67,6 +80,7 @@ void asMySQLQueryMgr::Close()
 		delete m_threads[i];
 		m_threads[i] = nullptr;
 	}
+	
 }
 
 void asMySQLQueryMgr::Update()

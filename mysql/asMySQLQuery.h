@@ -39,6 +39,7 @@ private:
 	std::vector<asMySQLThread* > m_threads;
 	std::vector<asMySQLCmdParam> m_results; // 各线程执行完的结果， 
 	u32	m_threadCount;
+	bool m_close;
 };
 
 #endif
