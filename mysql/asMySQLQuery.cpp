@@ -95,7 +95,7 @@ void asMySQLQueryMgr::Update()
 	{
 		if (cache[i].cb)
 		{
-			cache[i].cb(*cache[i].res, cache[i].userdata);
+			cache[i].cb(*cache[i].res);
 		}
 	}
 }
@@ -141,25 +141,23 @@ bool asMySQLQueryMgr::SyncQuery(const char* sql, asMySQLQueryResult* pRes)
 	return true;
 }
 
-void asMySQLQueryMgr::AsyncExecute(u32 rand,const char* sql, MySQLResultCB& cb,void* userdata)
+void asMySQLQueryMgr::AsyncExecute(u32 rand,const char* sql, MySQLResultCB& cb)
 {
 	asMySQLCmdParam param;
 	param.cb = cb;
 	param.sql = sql;
 	param.type = asMySQLCmdType::execute;
 	param.res = std::shared_ptr<asMySQLQueryResult>(new asMySQLQueryResult);
-	param.userdata = userdata;
 	m_threads[rand % m_threadCount]->AddTask(param);
 }
 
-void asMySQLQueryMgr::AsyncQuery(u32 rand,const char* sql, MySQLResultCB& cb,void* userdata)
+void asMySQLQueryMgr::AsyncQuery(u32 rand,const char* sql, MySQLResultCB& cb)
 {
 	asMySQLCmdParam param;
 	param.cb = cb;
 	param.sql = sql;
 	param.type = asMySQLCmdType::query;
 	param.res = std::shared_ptr<asMySQLQueryResult>(new asMySQLQueryResult);
-	param.userdata = userdata;
 	m_threads[rand % m_threadCount]->AddTask(param);
 }
 

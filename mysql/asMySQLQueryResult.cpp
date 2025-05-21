@@ -1,4 +1,4 @@
-﻿#include "asMySQLDefine.h"
+﻿#include "asMySQLQueryResult.h"
 
 asMySQLQueryResult::asMySQLQueryResult()
 	:m_curRes(nullptr), m_columns(0), m_rows(0), m_curRow(nullptr), m_curLen(nullptr),m_resIndex(0), m_success(true)

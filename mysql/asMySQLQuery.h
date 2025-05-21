@@ -29,11 +29,11 @@ public:
 	bool SyncQuery(const char* sql, asMySQLQueryResult* pRes);
 
 	// 异步
-	void AsyncExecute(u32 rand,const char* sql, MySQLResultCB& cb,void *userdata = nullptr);
-	void AsyncQuery(u32 rand,const char* sql, MySQLResultCB& cb,void* userdata = nullptr);
+	void AsyncExecute(u32 rand,const char* sql, MySQLResultCB& cb);
+	void AsyncQuery(u32 rand,const char* sql, MySQLResultCB& cb);
 
 	void AddResult(asMySQLCmdParam& param);
-private:
+private: 
 	MYSQL* m_conn;
 	std::mutex	m_mutex;
 	std::vector<asMySQLThread* > m_threads;

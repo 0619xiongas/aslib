@@ -2,7 +2,7 @@
 #define AS_MYSQLTHREAD_H 
 
 #include "../thread/asBaseThread.h"
-#include "asMySQLDefine.h"
+#include "asMySQLQueryResult.h"
 #include <list>
 #include <mutex>
 #include <condition_variable>

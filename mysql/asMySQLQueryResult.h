@@ -70,8 +70,7 @@ public:
 	std::string m_error;
 };
 
-// userdata必须为new出来的对象，否则出现问题，调用完回调之后必须释放
-typedef std::function<void(asMySQLQueryResult& res,void *userdata)> MySQLResultCB;
+typedef std::function<void(asMySQLQueryResult& res)> MySQLResultCB;
 
 enum class asMySQLCmdType
 {
@@ -85,15 +84,5 @@ struct asMySQLCmdParam
 	std::string sql;
 	asMySQLCmdType type;
 	std::shared_ptr<asMySQLQueryResult> res;
-	void* userdata; // 自定义数据类型
 };
-
-// 用户自定义数据类型基类
-class DBDataBase
-{
-public:
-	DBDataBase();
-	virtual~DBDataBase();
-};
-
 #endif
