@@ -11,11 +11,13 @@ SRCS := $(shell find src -name "*.cpp")
 OBJS := $(patsubst src/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
 # 输出库名
-TARGET_STATIC = aslib.a
-TARGET_SHARED = aslib.so
+TARGET_STATIC = lib/aslib.a
+TARGET_SHARED = lib/aslib.so
 
-# 默认目标
-all: $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED)
+all: $(BUILD_DIR) lib $(TARGET_STATIC) $(TARGET_SHARED)
+
+lib:
+	mkdir -p lib
 
 # 创建build目录
 $(BUILD_DIR):
