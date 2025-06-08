@@ -47,7 +47,7 @@ public:
 	void OnWriteDataCB(int ret);
 	void AddBufferSize(size_t size);
 protected:
-	virtual void ParseData();
+	void ParseData();
 
 private:
 	struct sockaddr_in		m_addr;	//地址

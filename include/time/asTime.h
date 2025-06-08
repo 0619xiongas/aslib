@@ -15,6 +15,7 @@
 
 #ifndef _WIN32
 #include <sys/time.h>
+#include <cstdio>
 #endif
 #include <time.h>
 #include "../asBaseDefine.h"

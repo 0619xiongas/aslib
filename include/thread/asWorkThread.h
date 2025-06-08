@@ -1,4 +1,4 @@
-#ifndef AS_WORKTHREAD_H
+﻿#ifndef AS_WORKTHREAD_H
 #define AS_WORKTHREAD_H
 
 #include "asBaseThread.h"

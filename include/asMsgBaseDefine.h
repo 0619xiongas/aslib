@@ -1,4 +1,4 @@
-#ifndef AS_MSGBASEDEFINE_H
+ï»¿#ifndef AS_MSGBASEDEFINE_H
 #define AS_MSGBASEDEFINE_H
 
 #include "asBaseDefine.h"
@@ -14,9 +14,9 @@ namespace asNet
 		asNetTcpMsgHead() :m_flag(AS_NET_TCP_FLAG), m_len(0), m_msgId(0)
 		{
 		}
-		u32		m_flag;//ÏûÏ¢Í·±êÖ¾
-		u32		m_len; // ÏûÏ¢Ìå³¤¶È£¬°üÀ¨head
-		u32		m_msgId;//ÏûÏ¢±àºÅ
+		u32		m_flag;//æ¶ˆæ¯å¤´æ ‡å¿—
+		u32		m_len; // æ¶ˆæ¯ä½“é•¿åº¦ï¼ŒåŒ…æ‹¬head
+		u32		m_msgId;//æ¶ˆæ¯ç¼–å·
 	};
 }
 

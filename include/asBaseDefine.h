@@ -1,4 +1,4 @@
-#ifndef AS_BASEDEFINE_H
+﻿#ifndef AS_BASEDEFINE_H
 #define AS_BASEDEFINE_H
 
 typedef int					i32;
@@ -48,6 +48,9 @@ inline AS_SHARED_ARRAY<T> make_shared_array(T* ptr)
 	return boost::shared_array<T>(ptr);
 #endif
 }
+#ifndef _WIN32
+#include <cstring>
+#endif
 
 #define SAFE_DELETE(p) if(p){delete p; p = nullptr;}
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}

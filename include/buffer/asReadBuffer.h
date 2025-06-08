@@ -9,7 +9,8 @@
  * ======================================
 *************************************************************************************/
 
-#pragma once
+#ifndef AS_READBUFFER_H
+#define AS_READBUFFER_H
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
@@ -90,3 +91,5 @@ private:
 	asBuffer	m_buf;
 	ulint		m_pos;	// 已读的大小
 };
+
+#endif

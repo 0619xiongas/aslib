@@ -24,8 +24,11 @@ void asProcess::GetInfo()
 	::GetModuleFileNameA(NULL, static_cast<LPSTR>(fullPath), 1024);
 	m_pid = ::_getpid();
 #else
-	readlink("/proc/self/exe", fullPath, 1024);
-	m_id = ::getpid();
+	if(readlink("/proc/self/exe", fullPath, 1024) == -1)
+	{
+		//log error
+	}
+	m_pid = ::getpid();
 #endif
 	m_fullPath = fullPath;
 	m_path = asPath::RemoveFileName(fullPath);

@@ -88,7 +88,6 @@ void asLogger::FormatStringEx(LOGTYPE type, const char* str, u32 lv, va_list& vl
 	}
 	char ti[20] = { 0 };
 	asTime::GetLocalTimeStr(ti);
-	u32 strLen = (u32)::strlen(str);
 	char* log = new char[1024];
 	snprintf(log, 1024, "[%s][%s]%s\n", ti, GetTypeString(type).c_str(), vaStr);
 	asMsg msg(AS_THREADMSG_LOGGER, lv, (ulint)log);

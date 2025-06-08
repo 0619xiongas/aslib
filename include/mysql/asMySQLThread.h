@@ -5,7 +5,10 @@
 #include "asMySQLQueryResult.h"
 #include <list>
 #include <mutex>
-#include <condition_variable>
+#include <condition_variable> 
+#ifndef _WIN32
+#define my_bool bool
+#endif
 
 class asMySQLQueryMgr;
 /*

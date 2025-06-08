@@ -1,11 +1,11 @@
-/*************************************************************************************
+ï»¿/*************************************************************************************
  *
- * ÎÄ ¼ş Ãû:		asLogger.h
- * Ãè    Êö:		ÊµÏÖÒ»¸öÏß³ÌµÄÈÕÖ¾Êä³ö´òÓ¡Àà
+ * æ–‡ ä»¶ å:		asLogger.h
+ * æ    è¿°:		å®ç°ä¸€ä¸ªçº¿ç¨‹çš„æ—¥å¿—è¾“å‡ºæ‰“å°ç±»
  * 
- * °æ    ±¾£º	V1.0
- * ´´ ½¨ Õß£º	astronaut
- * ´´½¨Ê±¼ä£º	2025/5/29 9:27
+ * ç‰ˆ    æœ¬ï¼š	V1.0
+ * åˆ› å»º è€…ï¼š	astronaut
+ * åˆ›å»ºæ—¶é—´ï¼š	2025/5/29 9:27
  * ======================================
 *************************************************************************************/
 #ifndef AS_LOGGER_H
@@ -31,10 +31,10 @@ public:
 
 	void Log(LOGTYPE type, const char* str);
 	void LogEx(LOGTYPE type, const char* str, ...);
-	// Ö»´òÓ¡µ½¿ØÖÆÌ¨
+	//åªæ‰“å°åˆ°æ§åˆ¶å°
 	void PrintConsole(LOGTYPE type, const char* str);
 	void PrintConsoleEx(LOGTYPE type, const char* str, ...);
-	// Ö»Ğ´Èëµ½ÎÄ¼ş
+	// åªå†™å…¥åˆ°æ–‡ä»¶
 	void PrintFile(LOGTYPE type, const char* str);
 	void PrintFileEx(LOGTYPE type, const char* str, ...);
 private:
@@ -48,8 +48,8 @@ private:
 	asProcess		m_info;
 	asCFileWriter	m_cfw;
 	std::string		m_dir;
-	char			m_type; // ÎÄ¼ş·ÖÆ¬ÀàĞÍ
-	char			m_lastTime[32]; // ÉÏÒ»´Î´´½¨logÎÄ¼şµÄÊ±¼ä
+	char			m_type; // æ–‡ä»¶åˆ†ç‰‡ç±»å‹
+	char			m_lastTime[32]; // ä¸Šä¸€æ¬¡åˆ›å»ºlogæ–‡ä»¶çš„æ—¶é—´
 
 };
 

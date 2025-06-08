@@ -6,7 +6,6 @@
 #else
 #include <unistd.h>
 #include <sys/stat.h>
-#include 
 #endif
 
 std::string asPath::RemoveFileName(const char* path)
@@ -58,13 +57,8 @@ std::string asPath::GetFileBaseName(const char* path, bool ext)
 {
 	std::string ret;
 	std::string sPath(path);
-	size_t extIndex = 0;
 	for (size_t i = sPath.size() - 1; i > 0; --i)
 	{
-		if (sPath[i] == '.')
-		{
-			extIndex = i;
-		}
 		if (sPath[i] == '/' || sPath[i] == '\\')
 		{
 			ret = sPath.substr(i + 1, sPath.size() - 1);

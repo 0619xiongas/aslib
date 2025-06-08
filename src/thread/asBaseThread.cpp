@@ -1,7 +1,7 @@
 ﻿#include "../../include/thread/asBaseThread.h"
 #include <chrono>
 asBaseThread::asBaseThread()
-	:m_thread(nullptr),m_threadId(0), m_func(nullptr)
+	:m_thread(nullptr),m_func(nullptr),m_threadId(0)
 {
 }
 

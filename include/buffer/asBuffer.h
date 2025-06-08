@@ -9,7 +9,8 @@
  * ======================================
 *************************************************************************************/
 
-#pragma once
+#ifndef AS_BUFFER_H
+#define AS_BUFFER_H
 #include "../asBaseDefine.h"
 #include <cstring>
 
@@ -73,3 +74,4 @@ private:
 	u64 m_curSize;
 	BUFFER_DATA_TYPE m_type = BUFFER_DATA_TYPE::BDT_NULL;
 };
+#endif

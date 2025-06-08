@@ -1,4 +1,4 @@
-#ifndef AS_MSGTHREAD_H
+ï»¿#ifndef AS_MSGTHREAD_H
 #define AS_MSGTHREAD_H
 
 #include "asWorkThread.h"
@@ -13,13 +13,13 @@ public:
 	asMsgThread();
 	virtual ~asMsgThread();
 
-	// Ïò´ËÏß³ÌÍ¶µİÏûÏ¢
+	// å‘æ­¤çº¿ç¨‹æŠ•é€’æ¶ˆæ¯
 	void PostMsg(asMsg& msg);
 	void PostMsg(u32 msgID, u32 subID, ulint param1, ulint param2, ulint param3); 
 	void ExitThread();
-	//ÉèÖÃÏûÏ¢¶ÓÁĞ×î´óÖµ
+	//è®¾ç½®æ¶ˆæ¯é˜Ÿåˆ—æœ€å¤§å€¼
 	void SetMsgCount(u32 maxSize);
-	//»ñÈ¡µ±Ç°Ïß³ÌÏûÏ¢Êı
+	//è·å–å½“å‰çº¿ç¨‹æ¶ˆæ¯æ•°
 	void GetMsgCount(u32& list1,u32 &list2);
 protected:
 	virtual void ThreadFunc();

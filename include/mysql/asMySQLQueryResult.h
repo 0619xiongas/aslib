@@ -1,7 +1,11 @@
 ﻿#ifndef AS_MYSQLDEFINE_H
 #define AS_MYSQLDEFINE_H
 
+#ifdef _WIN32
 #include <mysql.h>
+#else
+#include <mysql/mysql.h>
+#endif
 #include "../asBaseDefine.h"
 #include <string>
 #include <functional>

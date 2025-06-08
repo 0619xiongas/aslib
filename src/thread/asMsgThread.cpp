@@ -1,7 +1,7 @@
 #include "../../include/thread/asMsgThread.h"
 
 asMsgThread::asMsgThread()
-	:m_maxCount(100000),m_offset(0)
+	:m_offset(0),m_maxCount(100000)
 {
 }
 

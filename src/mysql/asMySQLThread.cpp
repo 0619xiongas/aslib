@@ -2,7 +2,7 @@
 
 
 asMySQLThread::asMySQLThread(std::function<void(asMySQLCmdParam&)> func)
-	:asWorkThread(), m_conn(nullptr), m_port(0),m_addResultFunc(func),m_exit(false)
+	:asWorkThread(), m_conn(nullptr),m_addResultFunc(func),m_port(0),m_exit(false)
 {
 
 }

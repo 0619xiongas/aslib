@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef AS_WRITEBUFFER_H
+#define AS_WRITEBUFFER_H
 #include "../asBaseDefine.h"
 #include "asBuffer.h"
 #include <string>
@@ -94,3 +95,4 @@ private:
 	bool _Write(const void* data, ulint size);
 	asBuffer m_buffer;
 };
+#endif

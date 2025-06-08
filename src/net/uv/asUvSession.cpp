@@ -97,7 +97,7 @@ void asUvSession::OnClose()
 void asUvSession::AllocBuf(uv_buf_t* buf)
 {
 	buf->base = m_recvBuf.CurrentBuf();
-	buf->len = (ULONG)m_recvBuf.RemainSize();
+	buf->len = (size_t)m_recvBuf.RemainSize();
 }
 
 // 解析包体

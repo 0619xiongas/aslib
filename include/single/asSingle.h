@@ -1,4 +1,4 @@
-#ifndef __SINGLE_H__
+ï»¿#ifndef __SINGLE_H__
 #define __SINGLE_H__
 #include <mutex>
 #include <memory>
@@ -34,7 +34,7 @@ private:
 	static std::shared_ptr<T> single;
 	static std::mutex m_mutex;
 };
-// Ä£°åÀàÒªÇóÔÚhÎÄ¼ş³õÊ¼»¯
+// æ¨¡æ¿ç±»è¦æ±‚åœ¨hæ–‡ä»¶åˆå§‹åŒ–
 template<class T>
 std::shared_ptr<T> asSingle<T>::single = nullptr;
 template<class T>
