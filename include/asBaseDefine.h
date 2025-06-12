@@ -15,6 +15,10 @@ typedef i64					lint;
 typedef u64					ulint;
 typedef int					bool32;
 
+#ifndef AS_INVAILD_U64
+#define AS_INVAILD_U64 0xffffffffffffffff
+#endif
+
 #if __cplusplus >= 201103L
 #define std11
 #endif
