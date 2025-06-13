@@ -57,7 +57,7 @@ void asNodeBuffer::Empty()
 	m_buf.Reset();
 }
 
-asNBIterator asNodeBuffer::Begin()
+asNodeBuffer::asNBIterator asNodeBuffer::Begin()
 {
 	asNBIterator itr;
 	if (m_buf.Size() > 0)
@@ -119,7 +119,7 @@ bool asNodeBuffer::WriteSerialize‌(const void* buf, ulint len)
 	if (m_offset == AS_INVAILD_U64)
 		return false;
 
-	if (tlen + sizeof(ulint) + m_buf.Size() > m_buf.MaxSize())
+	if (len + sizeof(ulint) + m_buf.Size() > m_buf.MaxSize())
 		return false;
 
 	ulint tLen = len;

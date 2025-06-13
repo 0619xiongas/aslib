@@ -17,7 +17,7 @@ class asNodeBuffer
         friend class asNodeBuffer;
     public:
         asNBIterator() :pData(nullptr), count(0), size(0) {}
-        asNBIterator(const asNBIterator& other):pData(other.pData),count(other.count),size(other.size){}
+        asNBIterator(const asNBIterator& other) :pData(other.pData), count(other.count), size(other.size) {}
         ~asNBIterator()
         {
             Clear();
@@ -89,6 +89,6 @@ private:
     asBuffer m_buf;
     ulint    m_count; // 数据段的个数
     ulint    m_offset; //当前buf的偏移量
-}
+};
 
 #endif
