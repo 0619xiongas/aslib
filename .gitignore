@@ -4,4 +4,4 @@ build/
 *.so
 *.a
 .vscode/
-./libTest
+libTest/

@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
 project(aslib LANGUAGES CXX)
 
-set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rd")
+set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
     #设置boost路径
-    set(BOOST_ROOT "${THIRD_PARTY_DIR}/boost172/include")
+    set(BOOST_ROOT "${THIRD_PARTY_DIR}/boost184")
     set(Boost_NO_SYSTEM_PATHS ON)
+    set(Boost_INCLUDE_DIR "${BOOST_ROOT}/include")
+    set(Boost_LIBRARY_DIR "${BOOST_ROOT}/lib")
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_MULTITHREADED ON)
     #设置mysql路径
     set(MYSQL_INCLUDE_DIR "${THIRD_PARTY_DIR}/mysql/include")
     set(MYSQL_LIB_DIR "${THIRD_PARTY_DIR}/mysql/lib")
@@ -31,8 +35,8 @@ else()
     find_package(MySQL REQUIRED)
 endif()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system thread chrono date_time atomic)
-include_directories(${Boost_INCLUDE_DIRS})
+find_package(Boost REQUIRED COMPONENTS filesystem system thread)
+include_directories(${Boost_INCLUDE_DIR})
 include_directories(${MYSQL_INCLUDE_DIR})
 
 # 添加各模块
@@ -63,7 +67,7 @@ target_include_directories(aslib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(aslib PUBLIC 
-    ${Boost_LIBRARIES}
+    ${Boost_LIBRARY_DIR}
 )
 if(WIN32)
     target_link_directories(aslib PUBLIC ${MYSQL_LIB_DIR})
