@@ -18,6 +18,10 @@ if(WIN32)
     set(MYSQL_INCLUDE_DIR "${THIRD_PARTY_DIR}/mysql/include")
     set(MYSQL_LIB_DIR "${THIRD_PARTY_DIR}/mysql/lib")
 
+    #设置libuv路径
+    set(LIBUV_INCLUDE_DIR "${THIRD_PARTY_DIR}/libuv1.3.0/include")
+    set(LIBUV_LIB_DIR "${THIRD_PARTY_DIR}/libuv1.3.0/lib/x64/debug")
+
     find_library(MYSQL_LIB 
     NAMES libmysql mysql 
     PATHS ${MYSQL_LIB_DIR} 
@@ -33,11 +37,13 @@ else()
     #boost
     set(Boost_USE_STATIC_LIBS ON)
     find_package(MySQL REQUIRED)
+    find_package(uv REQUIRED)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${MYSQL_INCLUDE_DIR})
+include_directories(${LIBUV_INCLUDE_DIR})
 
 # 添加各模块
 add_subdirectory(src/file)
@@ -47,7 +53,8 @@ add_subdirectory(src/time)
 add_subdirectory(src/log)
 add_subdirectory(src/mysql)
 add_subdirectory(src/thread)
-add_subdirectory(src/tools)  # 如果有 tools 模块
+add_subdirectory(src/tools)
+add_subdirectory(src/net)
 # 你有其他模块就继续 add_subdirectory(src/xxx)
 
 # 汇总所有 OBJECT 库，生成最终静态库
@@ -60,6 +67,7 @@ add_library(aslib STATIC
     $<TARGET_OBJECTS:mysql>
     $<TARGET_OBJECTS:thread>
     $<TARGET_OBJECTS:tools>  # 如果有 tools 模块
+    $<TARGET_OBJECTS:net>
     # 其他模块继续添加
 )
 
@@ -68,6 +76,9 @@ target_include_directories(aslib PUBLIC
 )
 target_link_libraries(aslib PUBLIC 
     ${Boost_LIBRARY_DIR}
+)
+target_link_libraries(aslib PUBLIC 
+    ${LIBUV_LIB_DIR}
 )
 if(WIN32)
     target_link_directories(aslib PUBLIC ${MYSQL_LIB_DIR})
