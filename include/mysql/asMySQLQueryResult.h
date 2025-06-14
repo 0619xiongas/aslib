@@ -6,7 +6,7 @@
 #else
 #include <mysql/mysql.h>
 #endif
-#include "asMySQLDefine.h"
+#include "../asBaseDefine.h"
 #include <string>
 #include <functional>
 #include <vector>
@@ -75,6 +75,12 @@ public:
 };
 
 typedef std::function<void(asMySQLQueryResult& res)> MySQLResultCB;
+
+enum class asMySQLCmdType
+{
+	query,
+	execute,
+};
 
 struct asMySQLCmdParam
 {
