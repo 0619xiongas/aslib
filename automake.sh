@@ -1,16 +1,18 @@
 #!/bin/bash
 
-aslib_include_path="/usr/include/aslib"
-aslib_lib_path="/usr/lib/aslib"
+aslib_include_path="/usr/local/include/aslib"
+aslib_lib_path="/usr/local/lib"
 
-# check if aslib is installed, if installed then uninstall it
-if [ -d "$aslib_include_path" ] || [ -d "$aslib_lib_path" ]; then
-    echo "Aslib is already installed. Uninstalling..."
+# check if aslib include directory exists,if so, remove it
+if [ -d "$aslib_include_path" ]; then
+    echo "Removing existing Aslib include directory..."
     sudo rm -rf "$aslib_include_path"
-    sudo rm -rf "$aslib_lib_path"
-    echo "Aslib uninstalled successfully."
-else
-    echo "Aslib is not installed."
+fi
+# check whether there are the two files aslib.a and aslib.so in the lib directory.
+# if so, remove them aslib.a and aslib.so
+if [ -d "$aslib_lib_path/aslib.a" || -d "$aslib_lib_path/aslib.so" ]; then
+    echo "Removing existing Aslib library directory..."
+    sudo rm -rf "$aslib_lib_path/aslib.a" "$aslib_lib_path/aslib.so"
 fi
 
 # reinstall aslib
