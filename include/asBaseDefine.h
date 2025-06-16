@@ -15,6 +15,11 @@ typedef i64					lint;
 typedef u64					ulint;
 typedef int					bool32;
 
+#ifndef AS_INVAILD_U64
+#define AS_INVAILD_U64 0xffffffffffffffff
+#endif
+
+
 #if __cplusplus >= 201103L
 #define std11
 #endif
@@ -25,7 +30,7 @@ typedef int					bool32;
 #define AS_SHARED_PTR std::shared_ptr
 #define AS_MAKE_SHARED	std::make_shared
 #else
-#include "boost/smart_ptr.hpp"
+#include <boost/smart_ptr.hpp>
 #define AS_SHARED_ARRAY boost::shared_array
 #define AS_SHARED_PTR boost::shared_ptr
 #define AS_MAKE_SHARED boost::make_shared

@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include "ucTestClient.h"
 #include "../aslib/single/asSingle.h"
 #include <memory>
@@ -31,7 +31,7 @@ int main()
 	while (true) {
 		auto start = std::chrono::steady_clock::now();
 
-		// ´òÓ¡ĞÅÏ¢
+		// æ‰“å°ä¿¡æ¯
 		u32 sid = g_client->GetServerSession();
 		if (sid != 0)
 		{
@@ -39,7 +39,7 @@ int main()
 			SendData(g_client->GetServerSession(), 1, (char*)info.c_str(), info.length());
 		}
 
-		// ¼ÆËãÊ£ÓàµÈ´ıÊ±¼ä£¨È·±£¾«È·3Ãë¼ä¸ô£©
+		// è®¡ç®—å‰©ä½™ç­‰å¾…æ—¶é—´ï¼ˆç¡®ä¿ç²¾ç¡®3ç§’é—´éš”ï¼‰
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 		if (elapsed < 3000) {
