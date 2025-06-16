@@ -1,4 +1,4 @@
-#include "uvTestServer.h"
+ï»¿#include "uvTestServer.h"
 #include <iostream>
 uvTestServer::uvTestServer()
 {
@@ -10,7 +10,6 @@ uvTestServer::~uvTestServer()
 
 void uvTestServer::OnNewMessage(asUvSession& session, u32 msgId, char* buf)
 {
-	// ×öÒ»´Î´òÓ¡ÐÅÏ¢£¬È»ºó»Ø°ü
 	if (buf)
 	{
 		std::string str(buf+sizeof(asNetTcpMsgHead));
