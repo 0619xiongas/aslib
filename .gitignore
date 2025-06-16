@@ -6,3 +6,5 @@ build/
 .vscode/
 libTest/
 out/
+lib/
+Test/

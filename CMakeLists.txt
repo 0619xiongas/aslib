@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 project(aslib LANGUAGES CXX)
 
+if(MSVC)
+    foreach(flag_var
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_C_FLAGS_DEBUG_INIT
+        CMAKE_CXX_FLAGS_DEBUG_INIT)
+        string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+    endforeach()
+endif()
+
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third")
 
 set(CMAKE_CXX_STANDARD 14)
@@ -8,7 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
     #设置boost路径
-    set(BOOST_ROOT "${THIRD_PARTY_DIR}/boost184")
+    set(BOOST_ROOT "${THIRD_PARTY_DIR}/boost")
     set(Boost_NO_SYSTEM_PATHS ON)
     set(Boost_INCLUDE_DIR "${BOOST_ROOT}/include")
     set(Boost_LIBRARY_DIR "${BOOST_ROOT}/lib")
@@ -19,8 +29,8 @@ if(WIN32)
     set(MYSQL_LIB_DIR "${THIRD_PARTY_DIR}/mysql/lib")
 
     #设置libuv路径
-    set(LIBUV_INCLUDE_DIR "${THIRD_PARTY_DIR}/libuv1.3.0/include")
-    set(LIBUV_LIB_DIR "${THIRD_PARTY_DIR}/libuv1.3.0/lib/x64/debug")
+    set(LIBUV_INCLUDE_DIR "${THIRD_PARTY_DIR}/libuv/include")
+    set(LIBUV_LIB_DIR "${THIRD_PARTY_DIR}/libuv/lib")
 
     find_library(MYSQL_LIB 
     NAMES libmysql mysql 
@@ -74,11 +84,15 @@ add_library(aslib STATIC
 target_include_directories(aslib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(aslib PUBLIC 
+link_directories(
     ${Boost_LIBRARY_DIR}
+    ${LIBUV_LIB_DIR}
 )
 target_link_libraries(aslib PUBLIC 
-    ${LIBUV_LIB_DIR}
+    boost_filesystem
+    boost_system
+    boost_thread
+    uv
 )
 if(WIN32)
     target_link_directories(aslib PUBLIC ${MYSQL_LIB_DIR})
@@ -91,4 +105,10 @@ if(MSVC)
     target_compile_options(aslib PRIVATE /W4)
 else()
     target_compile_options(aslib PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if(WIN32)
+    set_target_properties(aslib PROPERTIES 
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+    )
 endif()

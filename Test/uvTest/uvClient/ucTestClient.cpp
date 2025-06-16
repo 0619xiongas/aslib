@@ -1,6 +1,8 @@
 #include "ucTestClient.h"
 #include <iostream>
 #include <string>
+#include "../public/netcpp/test.pb.h"
+
 uvTestClient::uvTestClient()
 {
 }
@@ -13,8 +15,14 @@ void uvTestClient::OnNewMessage(asUvSession& session, u32 msgId, char* buf)
 {
 	if (buf)
 	{
-		std::string str(buf + sizeof(asNetTcpMsgHead));
-		std::cout << "recv client " << session.GetId() << " msgID is :" << msgId << ", info : " << str << std::endl;
+		asNetTcpMsgHead* head = (asNetTcpMsgHead*)buf;
+		u32 recvLen = head->m_len - sizeof(asNetTcpMsgHead);
+		char* recvStr = new char[recvLen];
+		::memset(recvStr, 0, recvLen);
+		::memcpy(recvStr, buf + sizeof(asNetTcpMsgHead), recvLen);
+		std::cout << "recv server " << session.GetId() << " msgID is :" << msgId;
+		ParseTestProto(recvStr, recvLen);
+		delete[] recvStr;
 	}
 	delete[] buf;
 }
@@ -32,4 +40,30 @@ void uvTestClient::OnAddNewSession(asUvSession& session)
 u32 uvTestClient::GetServerSession()
 {
 	return m_serverSessionId;
+}
+
+void uvTestClient::DoTestSendData()
+{
+	ReqBaseInfo req;
+	req.set_id(123456);
+	req.set_str("this is uv net work test, send to server!!!");
+	u32 bufLen = req.ByteSizeLong();
+	u32 totalLen = sizeof(asNetTcpMsgHead) + bufLen;
+	asNetTcpMsgHead head;
+	head.m_msgId = 1;
+	head.m_len = totalLen;
+	char* data = new char[totalLen];
+	::memset(data, 0, totalLen);
+	::memcpy(data, &head, sizeof(asNetTcpMsgHead));
+	req.SerializePartialToArray(data + sizeof(asNetTcpMsgHead), bufLen);
+	DoSendData(data, totalLen, m_serverSessionId);
+}
+
+void uvTestClient::ParseTestProto(char* buf, u32 len)
+{
+	ResBaseInfo res;
+	if (res.ParseFromArray(buf, len))
+	{
+		std::cout << "\tret is " << res.ret() << ",id is " << res.id() << ", str is " << res.str() << std::endl;
+	}
 }
