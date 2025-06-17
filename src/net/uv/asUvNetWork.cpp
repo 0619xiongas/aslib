@@ -314,6 +314,7 @@ void asUvNetWork::HandleCloseSession(u32 threadId, u32 sessionId)
 	{
 		session->OnClose();
 		pThread->m_sessions.erase(sessionId);
+		this->OnCloseSession(sessionId);
 	}
 }
 
