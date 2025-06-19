@@ -47,12 +47,14 @@ namespace as_uv_cb
 
 asUvNetWork::asUvNetWork()
 	:m_addr(),m_socket(), m_sendBufSize(1024 * 10), m_recvBufSize(1024 * 10), m_threadCount(1), m_sessionCount(100),
-	m_isClient(false),m_sessionIdAlloc(10000),m_connect()
+	m_isClient(false),m_sessionIdAlloc(10000),m_connect(),m_isStoped(false)
 {
 }
 
 asUvNetWork::~asUvNetWork()
 {
+	TryStopNetWork();
+	printf("asUvNetWork::~asUvNetWork\n");
 }
 
 void asUvNetWork::Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount)
@@ -89,49 +91,63 @@ bool asUvNetWork::TryRunNetWork(bool isClient)
 		{
 			StartListen();
 		}
+		m_isStoped = false;
 	}
 	return true;
 }
 
 bool asUvNetWork::TryStopNetWork()
 {
+	if(m_isStoped)
+	{
+		return true;
+	}
+	printf("asUvNetWork::TryStopNetWork\n");
 	for (size_t i = 0;i < m_threads.size();++i)
 	{
 		if (m_threads[i])
 		{
 			m_threads[i]->PostEvent([this, i]() {
-				this->m_threads[i]->StopTimer();
-				this->m_threads[i]->ClearAllSession();
 				uv_stop(this->m_threads[i]->m_loop);
 				});
 		}
 	}
-	for (size_t i = 0;i < m_threads.size();++i)
+	if(m_isClient)
 	{
-		if (m_threads[i])
-		{
-			uv_thread_join(&m_threads[i]->m_thread);
-		}
+		m_threads[0]->PostEvent([this]() {
+			if(!uv_is_closing((uv_handle_t*)&m_connect))
+			{
+				uv_close((uv_handle_t*)&m_connect, nullptr);
+			}
+		});
 	}
+	// 服务端关闭监听
 	if (!m_isClient)
 	{
-		uv_close((uv_handle_t*)&m_socket, nullptr);
+			m_threads[0]->PostEvent([this]() {
+            if (!uv_is_closing((uv_handle_t*)&m_socket)) 
+			{
+                uv_close((uv_handle_t*)&m_socket, nullptr);
+            }
+		});
 	}
 	for (size_t i = 0;i < m_threads.size();++i)
 	{
 		if (m_threads[i])
 		{
+			m_threads[i]->StopThread();
 			delete m_threads[i];
 			m_threads[i] = nullptr;
 		}
 	}
 	m_threads.clear();
-	return false;
+	m_isStoped = true;
+	return true;
 }
 
 u32 asUvNetWork::ConnectToServer()
 {
-	if (this->GetSessionCount() > 0)
+	if (this->GetSessionCount() >= m_sessionCount)
 	{
 		return 0;
 	}
@@ -151,9 +167,9 @@ u32 asUvNetWork::ConnectToServer()
 		}
 	}
 	u32 id = ++m_sessionIdAlloc;
-	u32 threadId = id % m_threadCount;
-	m_threads[threadId]->PostEvent([this,id,threadId]() {
-		this->HandleConnectToServer(id,m_threads[threadId]->m_loop);
+	// 连接默认是0
+	m_threads[0]->PostEvent([this,id]() {
+		this->HandleConnectToServer(id,m_threads[0]->m_loop);
 		});
 	return 0;
 }

@@ -12,6 +12,7 @@ asSendQueue::asSendQueue():m_size(0)
 asSendQueue::~asSendQueue()
 {
 	this->Clear();
+	printf("asSendQueue::~asSendQueue\n");
 }
 
 void asSendQueue::Push(AS_SHARED_ARRAY<char>& data, u32 len)
@@ -58,6 +59,7 @@ asUvSession::asUvSession()
 
 asUvSession::~asUvSession()
 {
+	printf("asUvSession::~asUvSession, session id : %u\n", m_sessionId);
 }
 
 void asUvSession::Init(u32 id, u32 recvBufSize, u32 sendBufSize, asUvNetWork* net)
@@ -97,7 +99,7 @@ void asUvSession::OnClose()
 void asUvSession::AllocBuf(uv_buf_t* buf)
 {
 	buf->base = m_recvBuf.CurrentBuf();
-	buf->len = (size_t)m_recvBuf.RemainSize();
+	buf->len = (ULONG)m_recvBuf.RemainSize();
 }
 
 // 解析包体

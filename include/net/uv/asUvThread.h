@@ -19,6 +19,8 @@ public:
 
 	bool InitThread();
 
+	bool StopThread();
+
 	void ClearAllSession();
 
 	void PostEvent(std::function<void()> event);
@@ -37,7 +39,8 @@ public:
 	std::function<void()>			m_timerFunc; // 任务函数
 	uv_idle_t						m_idle;
 private:
-	std::map<u32, asUvSession*>		m_sessions;						
+	std::map<u32, asUvSession*>		m_sessions;	
+	bool							m_isStoped;					
 };
 #endif // !AS_UVTHREAD_H
 

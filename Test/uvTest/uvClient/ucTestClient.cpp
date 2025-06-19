@@ -1,7 +1,7 @@
 #include "ucTestClient.h"
 #include <iostream>
 #include <string>
-#include "../public/netcpp/test.pb.h"
+//#include "../public/netcpp/test.pb.h"
 
 uvTestClient::uvTestClient()
 {
@@ -76,8 +76,8 @@ void uvTestClient::DoTestSendData()
 
 void uvTestClient::ParseTestProto(char* buf, u32 len)
 {
-	ResBaseInfo res;
-	if (res.ParseFromArray(buf, len))
-	{
-	}
+	//ResBaseInfo res;
+	//if (res.ParseFromArray(buf, len))
+	//{
+	//}
 }

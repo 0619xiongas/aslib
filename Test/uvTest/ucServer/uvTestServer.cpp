@@ -1,7 +1,7 @@
 ﻿#include "uvTestServer.h"
 #include <iostream>
-#include <google/protobuf/message.h>
-#include "../public/netcpp/test.pb.h"
+//#include <google/protobuf/message.h>
+//#include "../public/netcpp/test.pb.h"
 
 uvTestServer::uvTestServer()
 {
@@ -64,11 +64,11 @@ void uvTestServer::OnAddNewSession(asUvSession& session)
 	std::cout << "OnAddNewSession, session id : " << session.GetId() << std::endl;
 }
 
-void uvTestServer::ParseTestProto(char* buf, u32 len)
-{
-	ReqBaseInfo req;
-	if (req.ParseFromArray(buf, len))
-	{
-		
-	}
-}
+//void uvTestServer::ParseTestProto(char* buf, u32 len)
+//{
+//	ReqBaseInfo req;
+//	if (req.ParseFromArray(buf, len))
+//	{
+//		
+//	}
+//}

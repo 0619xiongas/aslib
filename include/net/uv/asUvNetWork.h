@@ -72,6 +72,7 @@ private:
 	u32								m_sessionIdAlloc;
 	bool							m_isClient;			
 	uv_connect_t					m_connect; // 连接server参数 (作为客户端)
+	bool							m_isStoped;
 };
 
 #endif
