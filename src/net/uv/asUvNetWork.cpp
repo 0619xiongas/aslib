@@ -103,15 +103,6 @@ bool asUvNetWork::TryStopNetWork()
 		return true;
 	}
 	printf("asUvNetWork::TryStopNetWork\n");
-	for (size_t i = 0;i < m_threads.size();++i)
-	{
-		if (m_threads[i])
-		{
-			m_threads[i]->PostEvent([this, i]() {
-				uv_stop(this->m_threads[i]->m_loop);
-				});
-		}
-	}
 	if(m_isClient)
 	{
 		m_threads[0]->PostEvent([this]() {

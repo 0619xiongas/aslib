@@ -5,6 +5,8 @@
 #include <map>
 #include <functional>
 #include <stdarg.h>
+#include <mutex>
+#include <condition_variable>
 
 
 // 一个thread维护一个loop
@@ -41,6 +43,9 @@ public:
 private:
 	std::map<u32, asUvSession*>		m_sessions;	
 	bool							m_isStoped;					
+	std::mutex						m_stopMutex;
+	std::condition_variable			m_stopCv;
+	bool							m_stopDone = false;
 };
 #endif // !AS_UVTHREAD_H
 

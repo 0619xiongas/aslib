@@ -10,8 +10,7 @@ asUvThread::asUvThread()
 
 asUvThread::~asUvThread()
 {
-	StopTimer();
-	printf("asUvThread::~asUvThread, thread id : %lu\n", m_thread);
+	StopThread();
 }
 
 bool asUvThread::InitThread()
@@ -30,7 +29,6 @@ bool asUvThread::InitThread()
 		auto* event = static_cast<std::function<void()>*>(handle->data);
 		(*event)();
 		delete event;
-		handle->data = nullptr;
 		};
 	auto IdleFunc = [](uv_idle_t* handle) {
 		auto self = static_cast<asUvThread*>(handle->data);
@@ -59,16 +57,20 @@ bool asUvThread::InitThread()
 bool asUvThread::StopThread()
 {
 	if(m_isStoped) return true;
-	m_isStoped = true;
-	printf("asUvThread::StopThread, thread id : %lu\n", m_thread);
+	std::unique_lock<std::mutex> lock(m_stopMutex);
+    m_stopDone = false;
 	PostEvent([this](){
+		printf("asUvThread::StopThread, thread id : %lu\n", m_thread);
 		this->StopTimer();
 		this->ClearAllSession();
-		//关闭async
-		if(m_async.data)
+		if (m_async.data)
 		{
-			delete static_cast<std::function<void()>*>(m_async.data);
-			m_async.data = nullptr;
+			// delete static_cast<std::function<void()>*>(m_async.data);
+			// m_async.data = nullptr;
+			auto* event = static_cast<std::function<void()>*>(m_async.data);
+			(*event)();
+			delete event;
+			
 		}
 		uv_close((uv_handle_t*)&m_async, nullptr);
 
@@ -77,21 +79,20 @@ bool asUvThread::StopThread()
 		uv_close((uv_handle_t*)&m_idle, nullptr);
 		// 停止loop
 		uv_stop(m_loop);
-		uv_walk(m_loop, [](uv_handle_t* handle, void*) {
-            if (!uv_is_closing(handle)) {
-                uv_close(handle, nullptr);
-            }
-        }, nullptr);
-		// 处理pending事件 
-		uv_run(m_loop,UV_RUN_ONCE);
+		m_stopDone = true;
+		m_stopCv.notify_one();
 	});
-	if(m_loop)
-	{
-		uv_loop_close(m_loop);
-        delete m_loop;
-        m_loop = nullptr;
-	}
 	uv_thread_join(&m_thread);
+	m_stopCv.wait(lock, [this] { 
+		if (m_loop)
+		{
+			uv_loop_close(m_loop);
+			delete m_loop;
+			m_loop = nullptr;
+		}
+		return m_stopDone; 
+		});
+	m_isStoped = true;
 	return true;
 }
 
