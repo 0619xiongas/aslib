@@ -1,0 +1,4 @@
+Visual Leak Detector Version 2.5.1 installed.
+    Outputting the report to the debugger and to E:\aslib\Test\uvTest\bin\server\Debug\server.txt
+No memory leaks detected.
+Visual Leak Detector is now exiting.

@@ -5,6 +5,8 @@
 #include <map>
 #include <functional>
 #include <stdarg.h>
+#include <mutex>
+#include <condition_variable>
 
 
 // 一个thread维护一个loop
@@ -18,6 +20,8 @@ public:
 	~asUvThread();
 
 	bool InitThread();
+
+	bool StopThread();
 
 	void ClearAllSession();
 
@@ -37,7 +41,11 @@ public:
 	std::function<void()>			m_timerFunc; // 任务函数
 	uv_idle_t						m_idle;
 private:
-	std::map<u32, asUvSession*>		m_sessions;						
+	std::map<u32, asUvSession*>		m_sessions;	
+	bool							m_isStoped;					
+	std::mutex						m_stopMutex;
+	std::condition_variable			m_stopCv;
+	bool							m_stopDone = false;
 };
 #endif // !AS_UVTHREAD_H
 

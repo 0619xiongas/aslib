@@ -1,6 +1,7 @@
 #pragma once
-#include "../aslib/net/uv/asUvNetWork.h"
-
+#include "net/uv/asUvNetWork.h"
+#include "asMsgBaseDefine.h"
+using namespace asNet;
 class uvTestServer : public asUvNetWork
 {
 public:
@@ -12,4 +13,6 @@ public:
 	virtual void OnCloseSession(u32 sessionId) override;
 
 	virtual void OnAddNewSession(asUvSession& session) override;
+
+	void ParseTestProto(char* buf,u32 len);
 };

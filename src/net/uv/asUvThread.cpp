@@ -3,19 +3,14 @@
 #include "../../../include/net/uv/asUvNetWork.h"
 
 asUvThread::asUvThread()
-	:m_thread(0)
+	:m_thread(0),m_loop(nullptr),m_isStoped(false)
 {
 	m_async.data = nullptr;
 }
 
 asUvThread::~asUvThread()
 {
-	StopTimer();
-	if (m_loop)
-	{
-		uv_loop_close(m_loop);
-		delete m_loop;
-	}
+	StopThread();
 }
 
 bool asUvThread::InitThread()
@@ -59,18 +54,54 @@ bool asUvThread::InitThread()
 	return true;
 }
 
+bool asUvThread::StopThread()
+{
+	if(m_isStoped) return true;
+	std::unique_lock<std::mutex> lock(m_stopMutex);
+    m_stopDone = false;
+	PostEvent([this](){
+		printf("asUvThread::StopThread, thread id : %lu\n", m_thread);
+		this->StopTimer();
+		this->ClearAllSession();
+		if (m_async.data)
+		{
+			// delete static_cast<std::function<void()>*>(m_async.data);
+			// m_async.data = nullptr;
+			auto* event = static_cast<std::function<void()>*>(m_async.data);
+			(*event)();
+			delete event;
+			
+		}
+		uv_close((uv_handle_t*)&m_async, nullptr);
+
+		//停止idle
+		uv_idle_stop(&m_idle);
+		uv_close((uv_handle_t*)&m_idle, nullptr);
+		// 停止loop
+		uv_stop(m_loop);
+		m_stopDone = true;
+		m_stopCv.notify_one();
+	});
+	uv_thread_join(&m_thread);
+	m_stopCv.wait(lock, [this] { 
+		if (m_loop)
+		{
+			uv_loop_close(m_loop);
+			delete m_loop;
+			m_loop = nullptr;
+		}
+		return m_stopDone; 
+		});
+	m_isStoped = true;
+	return true;
+}
+
 void asUvThread::ClearAllSession()
 {
 	for (auto itr: m_sessions)
 	{
-		uv_close((uv_handle_t*)&(itr.second->m_socket), [](uv_handle_t* handle) {
-			asUvSession* session = static_cast<asUvSession*>(handle->data);
-			if (session)
-			{
-				delete session;
-				session = nullptr;
-			}
-			});
+		// 实际析构交给OnClose回调处理
+		uv_close((uv_handle_t*)&(itr.second->m_socket), nullptr);
 	}
 	m_sessions.clear();
 }

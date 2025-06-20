@@ -1,50 +1,52 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include "ucTestClient.h"
-#include "../aslib/single/asSingle.h"
+#include "single/asSingle.h"
 #include <memory>
 #include <chrono>
 #include <thread>
+#include "thread/asBaseThread.h"
+#include <vld.h>
+#include <csignal>
+//#include <google/protobuf/stubs/common.h>
+#include "buffer/asBuffer.h"
 
-std::shared_ptr<uvTestClient> g_client = asSingle<uvTestClient>::instance();
-
-void SendData(u32 sessionId,u32 msgId, char* buf, u32 len)
+auto g_client = asSingleton<uvTestClient>::instance();
+bool g_exit = false;
+void SignalHandler(int signal) 
 {
-	u32 sendLen = sizeof(asNetTcpMsgHead);
-	if (buf)
+	if (signal == SIGINT) 
 	{
-		sendLen += len;
+		std::cout << "exiting ..." << std::endl;
+		g_exit = true;
 	}
-	asNetTcpMsgHead head;
-	head.m_msgId = msgId;
-	head.m_len = sendLen;
-	char* data = new char[sendLen];
-	::memcpy(data, &head, sizeof(asNetTcpMsgHead));
-	::memcpy(data + sizeof(asNetTcpMsgHead), buf, len);
-	g_client->DoSendData(data, sendLen, sessionId);
 }
-std::string info = "this is uv net work test,send to server!!!";
 
 int main()
 {
-	g_client->Init("127.0.0.1", 7890, 1024 * 10, 1024 * 10, 1, 100);
+	signal(SIGINT, SignalHandler);
+	g_client->Init("127.0.0.1", 10011, 1024 * 10, 1024 * 10, 1, 100);
 	g_client->TryRunNetWork(true);
-	while (true) {
+
+	while (!g_exit) {
 		auto start = std::chrono::steady_clock::now();
 
-		// ´òÓ¡ĞÅÏ¢
+		// æ‰“å°ä¿¡æ¯
 		u32 sid = g_client->GetServerSession();
 		if (sid != 0)
 		{
-			std::cout << "Client is send data" << std::endl;
-			SendData(g_client->GetServerSession(), 1, (char*)info.c_str(), info.length());
+			g_client->DoTestSendData();
 		}
 
-		// ¼ÆËãÊ£ÓàµÈ´ıÊ±¼ä£¨È·±£¾«È·3Ãë¼ä¸ô£©
+		// è®¡ç®—å‰©ä½™ç­‰å¾…æ—¶é—´ï¼ˆç¡®ä¿ç²¾ç¡®3ç§’é—´éš”ï¼‰
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-		if (elapsed < 3000) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(3000 - elapsed));
+		if (elapsed < 1000) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000 - elapsed));
 		}
 	}
+	//google::protobuf::ShutdownProtobufLibrary();
+	asSingleton<uvTestClient>::instance()->TryStopNetWork();
+	asSingleton<uvTestClient>::delete_instance();
+	system("pause");
 	return 0;
 }
