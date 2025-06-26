@@ -50,11 +50,11 @@ protected:
 	void ParseData();
 
 private:
+	uv_tcp_t				m_socket;// 连接
 	struct sockaddr_in		m_addr;	//地址
 	asBuffer				m_recvBuf; //数据接受缓存
 	asBuffer				m_sendBuf; //数据发送
 	bool					m_pending; // 是否在发送过程中
-	uv_tcp_t				m_socket;// 连接
 	asSendQueue				m_sendQueue;//发送队列
 	u32						m_sessionId;//连接编号
 	asUvNetWork*			m_netWork;

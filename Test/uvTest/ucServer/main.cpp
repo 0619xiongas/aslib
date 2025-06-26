@@ -5,7 +5,7 @@
 #include "thread/asBaseThread.h"
 #include <vld.h>
 #include <csignal>
-//#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/message.h>
 auto g_server = asSingleton<uvTestServer>::instance();
 bool g_exit = false;
 void SignalHandler(int signal) {
@@ -32,7 +32,7 @@ int main()
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000 - elapsed));
 		}
 	}
-	//google::protobuf::ShutdownProtobufLibrary();
+	google::protobuf::ShutdownProtobufLibrary();
 	asSingleton<uvTestServer>::instance()->TryStopNetWork();
 	asSingleton<uvTestServer>::delete_instance();
 	system("pause");

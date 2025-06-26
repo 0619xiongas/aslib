@@ -3,8 +3,8 @@
 
 #include "asUvSession.h"
 #include <map>
+#include <queue>
 #include <functional>
-#include <stdarg.h>
 #include <mutex>
 #include <condition_variable>
 
@@ -36,16 +36,14 @@ public:
 public:
 	uv_thread_t						m_thread;
 	uv_loop_t*						m_loop;
-	uv_async_t						m_async; //异步任务处理
+	uv_async_t						m_async;
 	uv_timer_t						m_timer; // 单任务定时器
 	std::function<void()>			m_timerFunc; // 任务函数
-	uv_idle_t						m_idle;
 private:
-	std::map<u32, asUvSession*>		m_sessions;	
-	bool							m_isStoped;					
-	std::mutex						m_stopMutex;
-	std::condition_variable			m_stopCv;
-	bool							m_stopDone = false;
+	std::map<u32, asUvSession*>			m_sessions;	
+	std::queue<std::function<void()>>	m_tasks;
+	std::mutex							m_taskMutex;
+	bool								m_isStoped;		
 };
 #endif // !AS_UVTHREAD_H
 

@@ -103,15 +103,6 @@ bool asUvNetWork::TryStopNetWork()
 		return true;
 	}
 	printf("asUvNetWork::TryStopNetWork\n");
-	if(m_isClient)
-	{
-		m_threads[0]->PostEvent([this]() {
-			if(!uv_is_closing((uv_handle_t*)&m_connect))
-			{
-				uv_close((uv_handle_t*)&m_connect, nullptr);
-			}
-		});
-	}
 	// 服务端关闭监听
 	if (!m_isClient)
 	{
@@ -127,8 +118,6 @@ bool asUvNetWork::TryStopNetWork()
 		if (m_threads[i])
 		{
 			m_threads[i]->StopThread();
-			delete m_threads[i];
-			m_threads[i] = nullptr;
 		}
 	}
 	m_threads.clear();

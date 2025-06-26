@@ -7,7 +7,7 @@
 #include "thread/asBaseThread.h"
 #include <vld.h>
 #include <csignal>
-//#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/message.h>
 #include "buffer/asBuffer.h"
 
 auto g_client = asSingleton<uvTestClient>::instance();
@@ -44,7 +44,7 @@ int main()
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000 - elapsed));
 		}
 	}
-	//google::protobuf::ShutdownProtobufLibrary();
+	google::protobuf::ShutdownProtobufLibrary();
 	asSingleton<uvTestClient>::instance()->TryStopNetWork();
 	asSingleton<uvTestClient>::delete_instance();
 	system("pause");

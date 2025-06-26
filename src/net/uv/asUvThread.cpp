@@ -5,7 +5,6 @@
 asUvThread::asUvThread()
 	:m_thread(0),m_loop(nullptr),m_isStoped(false)
 {
-	m_async.data = nullptr;
 }
 
 asUvThread::~asUvThread()
@@ -21,30 +20,88 @@ bool asUvThread::InitThread()
 		printf("Init loop fail");
 		return false;
 	}
-	auto ThreadFunc = [](void* arg) {
-		asUvThread* self = static_cast<asUvThread*>(arg);
-		uv_run(self->m_loop, UV_RUN_DEFAULT);
-		};
-	auto AsyncFunc = [](uv_async_t* handle) {
-		auto* event = static_cast<std::function<void()>*>(handle->data);
-		(*event)();
-		delete event;
-		};
-	auto IdleFunc = [](uv_idle_t* handle) {
-		auto self = static_cast<asUvThread*>(handle->data);
-		if (self)
+	m_loop->data = this;
+	uv_async_init(m_loop, &m_async, [](uv_async_t* handle) {
+		// 空回调，仅用于唤醒
+		});
+	auto ThreadFunc = [](void* arg) 
 		{
-
-		}
-		else
-		{
-			uv_stop(handle->loop);
-		}
+			asUvThread* self = static_cast<asUvThread*>(arg);
+			if (!self) return;
+			while (!self->m_isStoped)
+			{
+				std::queue<std::function<void()>> tmp;
+				{
+					std::lock_guard<std::mutex> lock(self->m_taskMutex);
+					std::swap(tmp, self->m_tasks);
+				}
+				while (!tmp.empty())
+				{
+					auto& task = tmp.front();
+					task();
+					tmp.pop();
+				}
+				uv_run(self->m_loop, UV_RUN_NOWAIT);
+			}
+			std::queue<std::function<void()>> tmp;
+			{
+				std::lock_guard<std::mutex> lock(self->m_taskMutex);
+				std::swap(tmp, self->m_tasks);
+			}
+			while (!tmp.empty())
+			{
+				auto& task = tmp.front();
+				task();
+				tmp.pop();
+			}
+			// 清理各种资源
+			printf("asUvThread::StopThread, thread id : %lu\n", self->m_thread);
+			// 定时器
+			if (self->m_timerFunc)
+			{
+				self->m_timerFunc = nullptr;
+				uv_timer_stop(&self->m_timer);
+				if (!uv_is_closing((uv_handle_t*)&self->m_timer))
+				{
+					uv_close((uv_handle_t*)&self->m_timer, nullptr);
+				}
+			}
+			// 异步事件
+			if (!uv_is_closing((uv_handle_t*)&self->m_async)) {
+				uv_close((uv_handle_t*)&self->m_async, nullptr);
+			}
+			// session
+			for (auto itr : self->m_sessions)
+			{
+				asUvSession* session = itr.second;
+				if (session)
+				{
+					uv_read_stop((uv_stream_t*)&session->m_socket);
+					uv_close((uv_handle_t*)&session->m_socket, [](uv_handle_t* handle) 
+						{
+							asUvSession* s = static_cast<asUvSession*>(handle->data);
+							if (s)
+							{
+								delete s;
+								s = nullptr;
+							}
+						});
+				}
+			}
+			self->m_sessions.clear();
+			
+			while(uv_run(self->m_loop,UV_RUN_NOWAIT) != 0)
+			{
+				// 空转
+			}
+			if (self->m_loop)
+			{
+				//uv_stop(self->m_loop);
+				uv_loop_close(self->m_loop);
+				delete self->m_loop;
+				self->m_loop = nullptr;
+			}
 		};
-	uv_async_init(m_loop, &m_async, AsyncFunc);
-	uv_idle_init(m_loop, &m_idle);
-	m_idle.data = this;
-	uv_idle_start(&m_idle, IdleFunc);
 	i32 ret = uv_thread_create(&m_thread,ThreadFunc, this);
 	if (ret != 0)
 	{
@@ -57,64 +114,33 @@ bool asUvThread::InitThread()
 bool asUvThread::StopThread()
 {
 	if(m_isStoped) return true;
-	std::unique_lock<std::mutex> lock(m_stopMutex);
-    m_stopDone = false;
-	PostEvent([this](){
-		printf("asUvThread::StopThread, thread id : %lu\n", m_thread);
-		this->StopTimer();
-		this->ClearAllSession();
-		if (m_async.data)
-		{
-			// delete static_cast<std::function<void()>*>(m_async.data);
-			// m_async.data = nullptr;
-			auto* event = static_cast<std::function<void()>*>(m_async.data);
-			(*event)();
-			delete event;
-			
-		}
-		uv_close((uv_handle_t*)&m_async, nullptr);
-
-		//停止idle
-		uv_idle_stop(&m_idle);
-		uv_close((uv_handle_t*)&m_idle, nullptr);
-		// 停止loop
-		uv_stop(m_loop);
-		m_stopDone = true;
-		m_stopCv.notify_one();
-	});
-	uv_thread_join(&m_thread);
-	m_stopCv.wait(lock, [this] { 
-		if (m_loop)
-		{
-			uv_loop_close(m_loop);
-			delete m_loop;
-			m_loop = nullptr;
-		}
-		return m_stopDone; 
-		});
 	m_isStoped = true;
+	uv_thread_join(&m_thread);
+	delete this;
 	return true;
 }
 
 void asUvThread::ClearAllSession()
 {
-	for (auto itr: m_sessions)
+	for (auto itr : m_sessions)
 	{
-		// 实际析构交给OnClose回调处理
-		uv_close((uv_handle_t*)&(itr.second->m_socket), nullptr);
+		asUvSession* session = itr.second;
+		if (session)
+		{
+			delete session;
+			session = nullptr;
+		}
 	}
 	m_sessions.clear();
 }
 
 void asUvThread::PostEvent(std::function<void()> event)
 {
-	auto* task = new std::function<void()>(std::move(event));
-	m_async.data = task;
-	if (uv_async_send(&m_async) != 0)
 	{
-		delete task;
-		m_async.data = nullptr;
+		std::lock_guard<std::mutex> lock(m_taskMutex);
+		m_tasks.push(std::move(event));
 	}
+	uv_async_send(&m_async);
 }
 
 void asUvThread::StartTimer(std::function<void()> callback, u64 timeout_ms, u64 repeat_ms)
@@ -138,8 +164,11 @@ void asUvThread::StartTimer(std::function<void()> callback, u64 timeout_ms, u64 
 void asUvThread::StopTimer()
 {
 	PostEvent([this]() {
-		uv_timer_stop(&m_timer);
-		uv_close((uv_handle_t*)&m_timer, nullptr);
+		if (!uv_is_closing((uv_handle_t*)&m_timer))
+		{
+			uv_timer_stop(&m_timer);
+			uv_close((uv_handle_t*)&m_timer, nullptr);
+		}
 		});
 }
 

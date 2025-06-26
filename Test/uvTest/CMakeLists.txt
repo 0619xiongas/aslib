@@ -22,8 +22,8 @@ set(LIBUV_LIB "${ASLIB_ROOT}/third/libuv/lib")
 set(BOOST_INCLUDE "${ASLIB_ROOT}/third/boost/include")
 set(LIBUV_INCLUDE "${ASLIB_ROOT}/third/libuv/include")
 
-# file(GLOB NETCPP_PROTO_SRCS "${CMAKE_SOURCE_DIR}/public/netcpp/*.pb.cc")
-# include_directories(${CMAKE_SOURCE_DIR}/public/netcpp)
+file(GLOB NETCPP_PROTO_SRCS "${CMAKE_SOURCE_DIR}/public/netcpp/*.pb.cc")
+include_directories(${CMAKE_SOURCE_DIR}/public/netcpp)
 
 include_directories(
     ${ASLIB_INCLUDE}
@@ -37,14 +37,14 @@ link_directories(
     ${BOOST_LIB}
     ${LIBUV_LIB}
 )
-# link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib)
+link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib)
 
 # ucServer 可执行文件
 add_executable(ucServer
     ucServer/main.cpp
     ucServer/uvTestServer.cpp
     ucServer/uvTestServer.h
-    # ${NETCPP_PROTO_SRCS}
+    ${NETCPP_PROTO_SRCS}
 )
 
 # uvClient 可执行文件
@@ -52,20 +52,20 @@ add_executable(uvClient
     uvClient/main.cpp
     uvClient/ucTestClient.cpp
     uvClient/ucTestClient.h
-    # ${NETCPP_PROTO_SRCS}
+    ${NETCPP_PROTO_SRCS}
 )
 
 # 链接 aslib、boost、libuv
 target_link_libraries(ucServer
     aslib
     uv
-    # libprotobufd
+    libprotobufd
 )
 
 target_link_libraries(uvClient
     aslib
     uv
-    # libprotobufd
+    libprotobufd
 )
 
 # 可选：设置输出目录
