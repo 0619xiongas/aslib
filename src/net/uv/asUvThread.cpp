@@ -1,7 +1,5 @@
 ﻿#include "../../../include/net/uv/asUvThread.h"
-#include <functional>
-#include "../../../include/net/uv/asUvNetWork.h"
-
+#include "../../../include/log/asLogger.h"
 asUvThread::asUvThread()
 	:m_thread(0),m_loop(nullptr),m_isStoped(false)
 {
@@ -17,7 +15,7 @@ bool asUvThread::InitThread()
 	m_loop = new uv_loop_t;
 	if (uv_loop_init(m_loop) != 0)
 	{
-		printf("Init loop fail");
+		AS_LOGGER->Log(LOGTYPE::ERR, "init uv_loop_t failed ...");
 		return false;
 	}
 	m_loop->data = this;
@@ -55,7 +53,7 @@ bool asUvThread::InitThread()
 				tmp.pop();
 			}
 			// 清理各种资源
-			printf("asUvThread::StopThread, thread id : %lu\n", self->m_thread);
+			AS_LOGGER->LogEx(LOGTYPE::TIP, "asUvThread::StopThread, thread id : %lu", (unsigned long*)self->m_thread);
 			// 定时器
 			if (self->m_timerFunc)
 			{
@@ -105,7 +103,7 @@ bool asUvThread::InitThread()
 	i32 ret = uv_thread_create(&m_thread,ThreadFunc, this);
 	if (ret != 0)
 	{
-		printf("Init Uv Thread fail, %s", uv_strerror(ret));
+		AS_LOGGER->Log(LOGTYPE::ERR, "init uvthread failed ... ");
 		return false;
 	}
 	return true;
@@ -118,20 +116,6 @@ bool asUvThread::StopThread()
 	uv_thread_join(&m_thread);
 	delete this;
 	return true;
-}
-
-void asUvThread::ClearAllSession()
-{
-	for (auto itr : m_sessions)
-	{
-		asUvSession* session = itr.second;
-		if (session)
-		{
-			delete session;
-			session = nullptr;
-		}
-	}
-	m_sessions.clear();
 }
 
 void asUvThread::PostEvent(std::function<void()> event)

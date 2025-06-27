@@ -6,7 +6,6 @@
 #include <queue>
 #include <functional>
 #include <mutex>
-#include <condition_variable>
 
 
 // 一个thread维护一个loop
@@ -22,8 +21,6 @@ public:
 	bool InitThread();
 
 	bool StopThread();
-
-	void ClearAllSession();
 
 	void PostEvent(std::function<void()> event);
 

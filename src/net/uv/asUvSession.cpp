@@ -3,6 +3,7 @@
 #include "../../../include/net/uv/asUvNetWork.h"
 #include "../../../include/buffer/asWriteBuffer.h"
 #include "../../../include/asMsgBaseDefine.h"
+#include "../../../include/log/asLogger.h"
 using namespace asNet;
 
 asSendQueue::asSendQueue():m_size(0)
@@ -12,7 +13,6 @@ asSendQueue::asSendQueue():m_size(0)
 asSendQueue::~asSendQueue()
 {
 	this->Clear();
-	printf("asSendQueue::~asSendQueue\n");
 }
 
 void asSendQueue::Push(AS_SHARED_ARRAY<char>& data, u32 len)
@@ -59,7 +59,6 @@ asUvSession::asUvSession()
 
 asUvSession::~asUvSession()
 {
-	printf("asUvSession::~asUvSession, session id : %u\n", m_sessionId);
 }
 
 void asUvSession::Init(u32 id, u32 recvBufSize, u32 sendBufSize, asUvNetWork* net)
@@ -130,7 +129,7 @@ void asUvSession::ParseData()
 	{
 		if (m_recvBuf.IsFull())
 		{
-			printf("%u recvBuf is full!!!", m_sessionId);
+			AS_LOGGER->LogEx(LOGTYPE::BUG, "%u recvBuf is full !!!", m_sessionId);
 		}
 		char* buf = m_recvBuf.Buf();
 		ulint len = m_recvBuf.Size();

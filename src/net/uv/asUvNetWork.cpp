@@ -1,5 +1,5 @@
 ﻿#include "../../../include/net/uv/asUvNetWork.h"
-
+#include "../../../include/log/asLogger.h"
 //c 风格回调函数
 namespace as_uv_cb
 {
@@ -54,7 +54,6 @@ asUvNetWork::asUvNetWork()
 asUvNetWork::~asUvNetWork()
 {
 	TryStopNetWork();
-	printf("asUvNetWork::~asUvNetWork\n");
 }
 
 void asUvNetWork::Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount)
@@ -102,7 +101,6 @@ bool asUvNetWork::TryStopNetWork()
 	{
 		return true;
 	}
-	printf("asUvNetWork::TryStopNetWork\n");
 	// 服务端关闭监听
 	if (!m_isClient)
 	{
@@ -230,7 +228,7 @@ u32 asUvNetWork::AllocSessionId()
 void asUvNetWork::DoAccept(u32 id, int status)
 {
 	if (status < 0) {
-		fprintf(stderr, "New Session error %s\n", uv_strerror(status));
+		AS_LOGGER->LogEx(LOGTYPE::ERR, "New Session error %s", uv_strerror(status));
 		return;
 	}
 	u32 offset = id % m_threadCount;
@@ -258,12 +256,12 @@ void asUvNetWork::HandleListen(uv_loop_t* loop)
 	this->m_socket.data = this;
 	i32 r = uv_listen((uv_stream_t*)&this->m_socket, 128, as_uv_cb::as_uv_connect_cb);
 	if (r) {
-		fprintf(stderr, "Listen error %s\n", uv_strerror(r));
+		AS_LOGGER->LogEx(LOGTYPE::ERR, "Listen error %s", uv_strerror(r));
 		return;
 	}
 	else
 	{
-		printf("Server Start Listen : %d", this->m_addr.sin_port);
+		AS_LOGGER->LogEx(LOGTYPE::TIP, "Server Start Listen : %d", this->m_addr.sin_port);
 	}
 }
 
@@ -275,7 +273,7 @@ void asUvNetWork::HandleAccept(u32 id,uv_loop_t* loop)
 
 	if (uv_accept((uv_stream_t*)&(this->m_socket), (uv_stream_t*)&(session->m_socket)) == 0)
 	{
-		printf("HandleAccept success session id : %u", id);
+		AS_LOGGER->LogEx(LOGTYPE::TIP, "HandleAccept success session id : %u", id);
 		u32 threadId = id % m_threadCount;
 		m_threads[threadId]->PostEvent([this,threadId,session ]() {
 			this->HandleAddSession(threadId, session);
@@ -383,7 +381,7 @@ void asUvNetWork::TryConnect(asUvSession* session)
 		}
 		else
 		{
-			printf("Connect server success!! session id : %u", session->GetId());
+			AS_LOGGER->LogEx(LOGTYPE::TIP, "Connect server success!! session id : %u", session->GetId());
 			u32 threadId = session->GetId() % session->m_netWork->m_threadCount;
 			netWork->m_threads[threadId]->PostEvent([threadId, session,netWork]() {
 				netWork->m_threads[threadId]->StopTimer();

@@ -13,7 +13,7 @@ asLogger::~asLogger()
 {
 }
 
-bool asLogger::Init(char type, const char* path)
+bool asLogger::Init(const char* path)
 {
 	if (path)
 	{
@@ -24,7 +24,12 @@ bool asLogger::Init(char type, const char* path)
 		m_dir = "./";
 		m_dir += (m_info.m_name + "_logs");
 	}
+	if (!StartThread())
+	{
+		return false;
+	}
 	return true;
+
 }
 
 void asLogger::Log(LOGTYPE type, const char* str)

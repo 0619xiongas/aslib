@@ -14,7 +14,7 @@
 #include "../tools/asProcess.h"
 #include "../file/asCFileWriter.h"
 #include <stdarg.h>
-
+#include "../single/asSingle.h"
 enum LOGTYPE
 {
 	TIP,
@@ -27,7 +27,7 @@ class asLogger : public asMsgThread
 public:
 	asLogger();
 	~asLogger();
-	bool Init(char type, const char* path);
+	bool Init(const char* path);
 
 	void Log(LOGTYPE type, const char* str);
 	void LogEx(LOGTYPE type, const char* str, ...);
