@@ -1,10 +1,11 @@
 file(GLOB_RECURSE MYSQL_SOURCES 
     "primary/*.cpp"
-    "stmt/*.cpp"
+    #"stmt/*.cpp"
+    "*.cpp"
 )
 file (GLOB_RECURSE MYSQL_HEADERS 
     "../../include/mysql/primary/*.h"
-    "../../include/mysql/stmt/*.h"
+    #"../../include/mysql/stmt/*.h"
     "../../include/mysql/*.h"
 )
 add_library(mysql OBJECT

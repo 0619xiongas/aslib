@@ -34,7 +34,7 @@ public:
 
 	void AddResult(asMySQLCmdParam& param);
 private: 
-	MYSQL* m_conn;
+	asMySQLConnection	m_mysql;
 	std::mutex	m_mutex;
 	std::vector<asMySQLThread* > m_threads;
 	std::vector<asMySQLCmdParam> m_results; // 各线程执行完的结果， 

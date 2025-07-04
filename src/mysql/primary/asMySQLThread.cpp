@@ -2,7 +2,7 @@
 
 
 asMySQLThread::asMySQLThread(std::function<void(asMySQLCmdParam&)> func)
-	:asWorkThread(), m_conn(nullptr),m_addResultFunc(func),m_port(0),m_exit(false)
+	:asWorkThread(),m_addResultFunc(func),m_exit(false)
 {
 
 }
@@ -11,34 +11,9 @@ asMySQLThread::~asMySQLThread()
 {
 }
 
-bool asMySQLThread::Connect2DB(const std::string& host, const std::string& user, const std::string& pwd, const std::string& db, u16 port)
+bool asMySQLThread::Init(const char* host, const char* user, const char* pwd, const char* db, u16 port, const char* character)
 {
-	MYSQL* conn = mysql_init(nullptr);
-	if (!conn)
-	{
-		return false;
-	}
-	my_bool reconn = 1;
-	mysql_options(conn, MYSQL_OPT_RECONNECT, &reconn);
-	if (mysql_real_connect(conn, host.c_str(), user.c_str(), pwd.c_str(), db.c_str(), port, NULL, 0) == 0)
-	{
-		i32 error = mysql_errno(conn);
-		//log
-		return false;
-	}
-	if (mysql_set_character_set(conn, "utf8") != 0)
-	{
-		i32 error = mysql_errno(conn);
-		return false;
-	}
-	m_conn = conn;
-	m_host = host;
-	m_user = user;
-	m_pwd = pwd;
-	m_db = db;
-	m_port = port;
-
-	return true;
+	return m_mysql.Init(host,port,user,pwd,db,character);
 }
 
 void asMySQLThread::Close()
@@ -58,24 +33,24 @@ void asMySQLThread::AddTask(asMySQLCmdParam& param)
 
 bool asMySQLThread::Query(std::string& sql, asMySQLQueryResult* res)
 {
-	if (mysql_real_query(m_conn, sql.c_str(), (unsigned long)sql.length()) != 0)
+	if (mysql_real_query(m_mysql.m_conn, sql.c_str(), (unsigned long)sql.length()) != 0)
 	{
 		return false;
 	}
 	// res空，取完结果集
 	if (res == nullptr)
 	{
-		mysql_store_result(m_conn);
-		while (mysql_next_result(m_conn) == 0)
+		mysql_store_result(m_mysql.m_conn);
+		while (mysql_next_result(m_mysql.m_conn) == 0)
 		{
-			mysql_store_result(m_conn);
+			mysql_store_result(m_mysql.m_conn);
 		}
 		return true;
 	}
-	res->AddResults(mysql_store_result(m_conn));
-	while (mysql_next_result(m_conn) == 0)
+	res->AddResults(mysql_store_result(m_mysql.m_conn));
+	while (mysql_next_result(m_mysql.m_conn) == 0)
 	{
-		res->AddResults(mysql_store_result(m_conn));
+		res->AddResults(mysql_store_result(m_mysql.m_conn));
 	}
 	return true;
 }
@@ -119,7 +94,7 @@ void asMySQLThread::ThreadFunc()
 			m_condition.wait(lock);
 			continue;
 		}
-		i32 ret = mysql_ping(m_conn);
+		i32 ret = mysql_ping(m_mysql.m_conn);
 		if (ret)
 		{
 			asBaseThread::Sleep(1);
@@ -132,10 +107,10 @@ void asMySQLThread::ThreadFunc()
 		ret = HandleOneTask(param);
 		if (ret)
 		{
-			u32 error = mysql_errno(m_conn);
+			u32 error = mysql_errno(m_mysql.m_conn);
 			if (error == 2013 || error == 2006 || error == 2014)
 			{
-				ReConnect();
+				m_mysql.ReConnect();
 				ret = HandleOneTask(param);
 			}
 		}
@@ -144,7 +119,7 @@ void asMySQLThread::ThreadFunc()
 		case 1:
 			param.res->m_error = param.sql;
 			param.res->m_error += ",";
-			param.res->m_error += mysql_error(m_conn);
+			param.res->m_error += mysql_error(m_mysql.m_conn);
 			param.res->m_success = false;
 			if (m_addResultFunc)
 				m_addResultFunc(param);
@@ -171,7 +146,7 @@ void asMySQLThread::ThreadFunc()
 			case 1:
 				itr->res->m_error = itr->sql;
 				itr->res->m_error += ",";
-				itr->res->m_error += mysql_error(m_conn);
+				itr->res->m_error += mysql_error(m_mysql.m_conn);
 				itr->res->m_success = false;
 				if (m_addResultFunc)
 					m_addResultFunc(*itr);
@@ -185,14 +160,8 @@ void asMySQLThread::ThreadFunc()
 			}
 		}
 	}
-	if (m_conn && m_exit)
+	if (m_exit)
 	{
-		mysql_close(m_conn);
-		m_conn = nullptr;
+		m_mysql.Close();
 	}
-}
-
-void asMySQLThread::ReConnect()
-{
-	Connect2DB(m_host, m_user, m_pwd, m_db, m_port);
 }

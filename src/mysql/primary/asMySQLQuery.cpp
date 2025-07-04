@@ -1,6 +1,6 @@
 ﻿#include "../../../include/mysql/primary/asMySQLQuery.h"
 asMySQLQueryMgr::asMySQLQueryMgr()
-	:m_threadCount(0),m_conn(nullptr),m_close(false)
+	:m_threadCount(0),m_close(false)
 {
 }
 
@@ -14,21 +14,8 @@ asMySQLQueryMgr::~asMySQLQueryMgr()
 
 bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, const std::string& pwd, const std::string& db, u16 port, u32 threadCount)
 {
-	if (m_conn)
+	if(!m_mysql.Init(host.c_str(), port, user.c_str(), pwd.c_str(), db.c_str(),"utf8mb4"))
 	{
-		mysql_close(m_conn);
-		m_conn = nullptr;
-	}
-	m_conn = mysql_init(NULL);
-	if (mysql_real_connect(m_conn, host.c_str(), user.c_str(), pwd.c_str(), db.c_str(), port, NULL, 0) == 0)
-	{
-		i32 error = mysql_errno(m_conn);
-		//log
-		return false;
-	}
-	if (mysql_set_character_set(m_conn, "utf8") != 0)
-	{
-		i32 error = mysql_errno(m_conn);
 		return false;
 	}
 	if (m_threads.empty())
@@ -44,7 +31,7 @@ bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, con
 				thread = nullptr;
 				continue;
 			}
-			if (!thread->Connect2DB(host, user, pwd, db, port))
+			if (!thread->Init(host.c_str(), user.c_str(), pwd.c_str(), db.c_str(), port, "utf8mb4"))
 			{
 				delete thread;
 				thread = nullptr;
@@ -66,11 +53,7 @@ bool asMySQLQueryMgr::Init(const std::string& host, const std::string& user, con
 void asMySQLQueryMgr::Close()
 {
 	m_close = true;
-	if (m_conn)
-	{
-		mysql_close(m_conn);
-		m_conn = nullptr;
-	}
+	m_mysql.Close();
 	for (size_t i = 0;i < m_threads.size();++i)
 	{
 		m_threads[i]->Close();
@@ -112,31 +95,31 @@ bool asMySQLQueryMgr::SyncQuery(const char* sql, asMySQLQueryResult& res)
 
 bool asMySQLQueryMgr::SyncQuery(const char* sql, asMySQLQueryResult* pRes)
 {
-	if (mysql_real_query(m_conn, sql, (unsigned long)strlen(sql)) != 0)
+	if (mysql_real_query(m_mysql.m_conn, sql, (unsigned long)strlen(sql)) != 0)
 	{
 		if (pRes)
 		{
 			pRes->m_success = false;
 			pRes->m_error = sql;
 			pRes->m_error += ",";
-			pRes->m_error += mysql_errno(m_conn);
+			pRes->m_error += mysql_errno(m_mysql.m_conn);
 		}
 		return false;
 	}
 	// res空，取完结果集
 	if (pRes == nullptr)
 	{
-		mysql_store_result(m_conn);
-		while (mysql_next_result(m_conn) == 0)
+		mysql_store_result(m_mysql.m_conn);
+		while (mysql_next_result(m_mysql.m_conn) == 0)
 		{
-			mysql_store_result(m_conn);
+			mysql_store_result(m_mysql.m_conn);
 		}
 		return true;
 	}
-	pRes->AddResults(mysql_store_result(m_conn));
-	while (mysql_next_result(m_conn) == 0)
+	pRes->AddResults(mysql_store_result(m_mysql.m_conn));
+	while (mysql_next_result(m_mysql.m_conn) == 0)
 	{
-		pRes->AddResults(mysql_store_result(m_conn));
+		pRes->AddResults(mysql_store_result(m_mysql.m_conn));
 	}
 	return true;
 }

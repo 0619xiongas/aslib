@@ -9,6 +9,8 @@ if(MSVC)
         CMAKE_CXX_FLAGS_DEBUG_INIT)
         string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
     endforeach()
+
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third")
@@ -56,6 +58,7 @@ include_directories(${MYSQL_INCLUDE_DIR})
 include_directories(${LIBUV_INCLUDE_DIR})
 
 # 添加各模块
+add_subdirectory(src/tools)
 add_subdirectory(src/file)
 add_subdirectory(src/buffer)
 add_subdirectory(src/algorithm)
@@ -63,7 +66,6 @@ add_subdirectory(src/time)
 add_subdirectory(src/log)
 add_subdirectory(src/mysql)
 add_subdirectory(src/thread)
-add_subdirectory(src/tools)
 add_subdirectory(src/net)
 # 你有其他模块就继续 add_subdirectory(src/xxx)
 
