@@ -104,7 +104,7 @@ bool asBuffer::Resize(ulint newLen, bool saveData)
 		{
 			m_curSize = 0;
 		}
-		SAFE_DELETE_ARRAY(m_data)
+		AS_SAFE_DELETE_ARRAY(m_data)
 		m_maxSize = newLen;
 		m_data = pData;
 		return true;
@@ -204,7 +204,7 @@ void asBuffer::Clear()
 	m_maxSize = 0;
 	m_curSize = 0;
 	if (m_type == BUFFER_DATA_TYPE::BDT_NEED_NEW)
-		SAFE_DELETE_ARRAY(m_data)
+		AS_SAFE_DELETE_ARRAY(m_data)
 	else
 		m_data = nullptr;
 	m_type = BUFFER_DATA_TYPE::BDT_NULL;

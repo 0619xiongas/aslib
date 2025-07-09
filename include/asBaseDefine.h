@@ -57,8 +57,8 @@ inline AS_SHARED_ARRAY<T> make_shared_array(T* ptr)
 #include <cstring>
 #endif
 
-#define SAFE_DELETE(p) if(p){delete p; p = nullptr;}
-#define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
+#define AS_SAFE_DELETE(p) if(p){delete p; p = nullptr;}
+#define AS_SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
 
 union Union32

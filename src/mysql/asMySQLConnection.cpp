@@ -1,6 +1,6 @@
 ﻿#include "../../../include/mysql/asMySQLConnection.h"
 
-asMySQLConnection::asMySQLConnection():m_conn(NULL),m_port(0),m_rows(0),m_fields(0),m_affectCount(0), m_insertId(0)
+asMySQLConnection::asMySQLConnection():m_conn(NULL),m_port(0)
 {
 }
 

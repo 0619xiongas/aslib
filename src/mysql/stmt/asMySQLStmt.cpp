@@ -3,11 +3,49 @@
 #include "../../../include/mysql/stmt/asMySQLStmtQuery.h"
 using namespace astronaut;
 asMySQLStmt::asMySQLStmt(asMySQLStmtQuery* conn)
+	:m_query(conn),m_stmt(nullptr), m_inBinds(nullptr),m_outBinds(nullptr),
+	m_resFlag(0),m_inCount(0), m_outCount(0), m_inParams(nullptr), m_outParams(nullptr)
 {
 }
 
 asMySQLStmt::~asMySQLStmt()
 {
+	Clear();
+}
+
+void asMySQLStmt::Clear()
+{
+	if (m_stmt)
+	{
+		ClearResult();
+		mysql_stmt_close(m_stmt);
+		m_stmt = nullptr;
+	}
+	for (u32 i = 0; i < m_inCount && m_inParams; ++i)
+	{
+		AS_SAFE_DELETE_ARRAY(m_inBinds);
+		AS_SAFE_DELETE(m_inParams[i]);
+	}
+	AS_SAFE_DELETE_ARRAY(m_inParams);
+	for (u32 i = 0; i < m_outCount && m_outParams; ++i)
+	{
+		AS_SAFE_DELETE_ARRAY(m_outBinds);
+		AS_SAFE_DELETE(m_outParams[i]);
+	}
+	AS_SAFE_DELETE_ARRAY(m_outParams);
+	m_resFlag = 0;
+	m_inCount = 0;
+	m_outCount = 0;
+}
+
+void asMySQLStmt::Close()
+{
+	if (m_stmt)
+	{
+		ClearResult();
+		mysql_stmt_close(m_stmt);
+		m_stmt = nullptr;
+	}
 }
 
 i32 asMySQLStmt::InitStmtParams(const char* in, const char* out, const char* sql, const char flag)
@@ -182,14 +220,14 @@ i32 asMySQLStmt::InitStmtParams(const char* in, const char* out, const char* sql
 	}
 	if(ret)
 	{
-		return ret
+		return ret;
 	}
 	return PrepareStmt();
 }
 
 i32 asMySQLStmt::PrepareStmt()
 {
-	if(!m_Mgr)
+	if(!m_query)
 	{
 		return -1;
 	}
@@ -197,13 +235,13 @@ i32 asMySQLStmt::PrepareStmt()
 	{
 		return -1;
 	}
-	m_stmt = mysql_stmt_init(m_Mgr->m_mysql.m_conn);
+	m_stmt = mysql_stmt_init(m_query->m_mysql.m_conn);
 	if(!m_stmt)
 	{
 		//log
 		return -1;
 	}
-	if(mysql_stmt_prepare(m_stmt,m_sql.c_str(),m_sql.length()) != 0)
+	if(mysql_stmt_prepare(m_stmt,m_sql.c_str(),(unsigned long)m_sql.length()) != 0)
 	{
 		// log
 		return -1;
@@ -211,7 +249,461 @@ i32 asMySQLStmt::PrepareStmt()
 	return 0;
 }
 
-i32 asMySQLStmt::ExecuteQuery(i32 num, ...)
+i32 asMySQLStmt::ExecuteQuery(u32 num, ...)
 {
+	i32 ret = 0;
+	va_list va;
+	va_start(va, num);
+	ret = ExecuteQuery(num, va);
+	va_end(va);
+	return ret;
+}
 
+i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
+{
+	if (num < m_inCount)
+	{
+		//log
+		return -1;
+	}
+	ResetBindData();
+	if (m_inCount > 0)
+	{
+		for (u32 i = 0;i < m_inCount;++i)
+		{
+			switch (m_inParams[i]->m_type)
+			{
+			case '1':
+			{
+				int value = va_arg(args, int);
+				m_inParams[i]->SetData(&value, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '2':
+			{
+				unsigned int value = va_arg(args, unsigned int);
+				m_inParams[i]->SetData(&value, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '3':
+			{
+
+				char c = va_arg(args, int);
+				m_inParams[i]->SetData(&c, 0);
+				if (--num < 0)
+				{
+					//log 
+					return -1;
+				}
+			}
+			break;
+			case '4':
+			{
+				unsigned char c = va_arg(args, unsigned int);
+				m_inParams[i]->SetData(&c, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '5':
+			{
+				short s = va_arg(args, int);
+				m_inParams[i]->SetData(&s, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '6':
+			{
+				unsigned short s = va_arg(args, unsigned int);
+				m_inParams[i]->SetData(&s, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '7':
+			{
+				long long value = va_arg(args, long long);
+				m_inParams[i]->SetData(&value, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case '8':
+			{
+				unsigned long long value = va_arg(args, unsigned long long);
+				m_inParams[i]->SetData(&value, 0);
+				if (--num < 0)
+				{
+					//log 
+					return -1;
+				}
+			}
+			break;
+			case '9':
+			{
+				asStmtTime* t = dynamic_cast<asStmtTime*>(m_inParams[i]);
+				YMDHMS* tt = reinterpret_cast<YMDHMS*>(va_arg(args, void*));
+				t->SetData(tt->year.u32p, tt->month.u32p, tt->day.u32p, tt->hour.u32p, tt->minutes.u32p, tt->second.u32p);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case 'a':
+			case 'b':
+			{
+				unsigned int len = va_arg(args, unsigned int);
+				char* str = va_arg(args, char*);
+				m_inParams[i]->SetData(str, len);
+				num -= 2;
+				if (num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			case 'c':
+			{
+				float f = (float)va_arg(args, double);
+				m_inParams[i]->SetData(&f, 0);
+				if (--num < 0)
+				{
+					//log
+					return -1;
+				}
+			}
+			break;
+			default:
+				//log
+				return -1;
+			}
+		}
+	}
+	i32 ret = 0;
+	if (m_inCount > 0)
+	{
+		ret = Execute(m_inBinds);
+	}
+	else
+	{
+		ret = Execute(nullptr);
+	}
+	return ret;
+}
+
+i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
+{
+	char* pData = const_cast<char*>(data);
+	u32 Len = len;
+	ResetBindData();
+	if (m_inCount > 0)
+	{
+		for (u32 i = 0; i < m_inCount; ++i)
+		{
+			switch (m_inParams[i]->m_type)
+			{
+			case '1':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(int))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(int);
+				Len -= sizeof(int);
+			}
+			break;
+			case '2':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(unsigned int))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(unsigned int);
+				Len -= sizeof(unsigned int);
+			}
+			break;
+			case '3':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(char))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(char);
+				Len -= sizeof(char);
+			}
+			break;
+			case '4':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(unsigned char))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(unsigned char);
+				Len -= sizeof(unsigned char);
+			}
+			break;
+			case '5':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(short))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(short);
+				Len -= sizeof(short);
+			}
+			break;
+			case '6':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(unsigned short))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(unsigned short);
+				Len -= sizeof(unsigned short);
+			}
+			break;
+			case '7':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(long long))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(long long);
+				Len -= sizeof(long long);
+			}
+			break;
+			case '8':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(unsigned long long))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(unsigned long long);
+				Len -= sizeof(unsigned long long);
+			}
+			break;
+			case '9':
+			{
+				asStmtTime* t = dynamic_cast<asStmtTime*>(m_inParams[i]);
+				YMDHMS* tt = reinterpret_cast<YMDHMS*>(pData);
+				if (Len < sizeof(YMDHMS))
+				{
+					//log
+					return -1;
+				}
+				t->SetData(tt->year.u32p, tt->month.u32p, tt->day.u32p, tt->hour.u32p, tt->minutes.u32p, tt->second.u32p);
+				pData += sizeof(YMDHMS);
+				Len -= sizeof(YMDHMS);
+			}
+			break;
+			case 'a':
+			case 'b':
+			{
+				unsigned int strLen = astronaut::String2UInt32(pData);
+				pData += sizeof(unsigned int);
+				m_inParams[i]->SetData(pData, strLen);
+				if (Len < sizeof(unsigned int) + strLen)
+				{
+					//log
+					return -1;
+				}
+				pData += strLen;
+				Len -= (strLen + sizeof(unsigned int));
+			}
+			break;
+			case 'c':
+			{
+				m_inParams[i]->SetData(pData, 0);
+				if (Len < sizeof(float))
+				{
+					//log
+					return -1;
+				}
+				pData += sizeof(float);
+				Len -= sizeof(float);
+			}
+			break;
+			default:
+				//log
+				return -1;
+			}
+		}
+	}
+	i32 ret = 0;
+	if (m_inCount > 0)
+	{
+		ret = Execute(m_inBinds);
+	}
+	else
+	{
+		ret = Execute(nullptr);
+	}
+	return ret;
+}
+
+u8 asMySQLStmt::GetResultType()
+{
+	return m_resFlag;
+}
+
+void asMySQLStmt::ClearResult()
+{
+	if (m_stmt)
+	{
+		mysql_stmt_free_result(m_stmt);
+		while (mysql_stmt_next_result(m_stmt) == 0)
+		{
+			mysql_stmt_free_result(m_stmt);
+		}
+	}
+}
+
+void asMySQLStmt::ResetBindData()
+{
+	for (u32 i = 0; i < m_inCount; ++i)
+	{
+		m_inParams[i]->Reset();
+	}
+	for (u32 i = 0; i < m_outCount; ++i)
+	{
+		m_outParams[i]->Reset();
+	}
+}
+
+i32 asMySQLStmt::Execute(MYSQL_BIND* binds)
+{
+	if (binds)
+	{
+		if (mysql_stmt_bind_param(m_stmt, binds))
+		{
+			//log
+			return -1;
+		}
+	}
+	if (mysql_stmt_execute(m_stmt))
+	{
+		//log
+		return -1;
+	}
+	m_query->m_affectCount = (u32)mysql_stmt_affected_rows(m_stmt);
+	m_query->m_insertId = (m_resFlag & AS_DB_STMT_RESULT_INSERT) ? (u64)mysql_stmt_insert_id(m_stmt) : 0;
+	return 0;
+}
+i32 asMySQLStmt::GetResults()
+{
+	m_query->m_rows = 0;
+	m_query->m_results.Empty();
+	if ((m_resFlag & AS_DB_STMT_RESULT_ONE) || (m_resFlag & AS_DB_STMT_RESULT_MULTI))
+	{
+		if (mysql_stmt_bind_result(m_stmt, m_outBinds))
+		{
+			//log
+			return -1;
+		}
+		if (mysql_stmt_store_result(m_stmt))
+		{
+			//log
+			return -1;
+		}
+		u64 rows = mysql_stmt_num_rows(m_stmt);
+		if (rows > 0)
+		{
+			while (!mysql_stmt_fetch(m_stmt))
+			{
+				m_query->m_results.StartWrite();
+				for (u32 i = 0; i < m_outCount; ++i)
+				{
+					switch (m_outParams[i]->m_type)
+					{
+					case '1':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(int));
+						break;
+					case '2':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(unsigned int));
+						break;
+					case '3':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(char));
+						break;
+					case '4':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(unsigned char));
+						break;
+					case '5':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(short));
+						break;
+					case '6':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(unsigned short));
+						break;
+					case '7':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(long long));
+						break;
+					case '8':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(unsigned long long));
+						break;
+					case '9':
+					{
+						asStmtTime* t = dynamic_cast<asStmtTime*>(m_outParams[i]);
+						YMDHMS tt; tt.Zero();
+						t->GetData(tt);
+						m_query->m_results.Write(&tt, sizeof(tt));
+					}
+					break;
+					case 'a':
+					case 'b':
+						m_query->m_results.Write(m_outParams[i]->GetData(), m_outParams[i]->m_len);
+						break;
+					case 'c':
+						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(float));
+					default:
+						//log
+						return -1;
+					}
+				}
+				m_query->m_results.EndWrite();
+				++m_query->m_rows;
+			}
+		}
+	}
+	return 0;
 }

@@ -8,7 +8,9 @@
 #endif
 
 asMySQLStmtQuery::asMySQLStmtQuery()
+	:m_stmt(this),m_rows(0),m_fields(0),m_affectCount(0),m_insertId(0)
 {
+	m_results.Init(1024 * 2);
 }
 
 asMySQLStmtQuery::~asMySQLStmtQuery()

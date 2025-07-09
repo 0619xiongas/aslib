@@ -8,11 +8,13 @@
 */
 class asMySQLThread;
 class asMySQLQueryMgr;
+class asMySQLStmt;
 
 class asMySQLConnection final
 {
 	friend class asMySQLThread;
 	friend class asMySQLQueryMgr;
+	friend class asMySQLStmt;
 public:
 	asMySQLConnection();
 	~asMySQLConnection();
@@ -46,10 +48,6 @@ private:
 	std::string		m_db;
 	std::string		m_char;
 	u16				m_port;
-	u32				m_rows;
-	u32				m_fields;
-	u32				m_affectCount;
-	u64				m_insertId;
 };
 
 #endif

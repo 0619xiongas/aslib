@@ -33,6 +33,12 @@ blob -> b##len
 float -> f32
 */
 
+#define AS_DB_STMT_RESULT_INSERT	1
+#define AS_DB_STMT_RESULT_NULL		2
+#define AS_DB_STMT_RESULT_ONE		4
+#define AS_DB_STMT_RESULT_MULTI		8
+#define AS_DB_STMT_DELETE			16
+
 struct asStmtParam
 {
 public:
@@ -43,7 +49,7 @@ public:
 	virtual void SetData(void* data,unsigned long len) = 0;
 	virtual void Reset() = 0;
 	/* data */
-protected:
+
 	char			m_type;
 	unsigned long 	m_len;
 	my_bool			m_null;

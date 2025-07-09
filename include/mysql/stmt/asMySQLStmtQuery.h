@@ -4,6 +4,7 @@
 #include "asMySQLStmt.h"
 #include "../asMySQLConnection.h"
 #include <map>
+#include "../../buffer/asNodeBuffer.h"
 
 class asMySQLStmtQuery
 {
@@ -19,6 +20,11 @@ private:
 	asMySQLConnection	m_mysql;
 	asMySQLStmt			m_stmt;
 	std::map<u32, asMySQLStmt> m_stmts;
+	asNodeBuffer		m_results;
+	u32					m_rows;
+	u32					m_fields;
+	u32					m_affectCount;
+	u64					m_insertId;
 };
 
 #endif
