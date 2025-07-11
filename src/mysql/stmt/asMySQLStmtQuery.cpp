@@ -91,3 +91,33 @@ bool asMySQLStmtQuery::LoadMySQLStmtMap(const char* path)
 	cJSON_Delete(root);
 	return ret;
 }
+
+i32 asMySQLStmtQuery::PrepareStmtParams(u32 id, const char* in, const char* out, const char* sql, const char flag)
+{
+	return 0;
+}
+
+i32 asMySQLStmtQuery::PrepareStmtParms(u32 id, const char* stmtStr, const char flag)
+{
+	return 0;
+}
+
+i32 asMySQLStmtQuery::Query(const char* in, const char* out, const char* sql, const char flag, i32 num, ...)
+{
+	return 0;
+}
+
+i32 asMySQLStmtQuery::Query(const char* in, const char* out, const char* sql, const char flag, u32 len, const char* data)
+{
+	return 0;
+}
+
+i32 asMySQLStmtQuery::QueryByID(u32 id, i32 num, ...)
+{
+	return 0;
+}
+
+i32 asMySQLStmtQuery::QueryByID(u32 id, u32 len, const char* data)
+{
+	return 0;
+}
