@@ -26,11 +26,11 @@ public:
     i32 ExecuteQuery(u32 num, va_list& args);
     i32 ExecuteQuery(u32 len, const char* data);
     // 获取结果类型
-    u8 GetResultType();
+    u8 GetQueryType();
     // 清理结果集
     void ClearResult();
     // 获取结果集 写入buffer
-    i32 GetResults();
+    i32 GetResultsToBuffer();
 private:
     void ResetBindData();
 

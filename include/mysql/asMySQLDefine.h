@@ -37,7 +37,6 @@ float -> f32
 #define AS_DB_STMT_RESULT_NULL		2
 #define AS_DB_STMT_RESULT_ONE		4
 #define AS_DB_STMT_RESULT_MULTI		8
-#define AS_DB_STMT_DELETE			16
 
 struct asStmtParam
 {
@@ -571,5 +570,12 @@ public:
 	}
 private:
 	float	value;
+};
+
+struct asDBNetParam
+{
+	ulint param;
+	u32 rows;
+	u32 insertID;
 };
 #endif

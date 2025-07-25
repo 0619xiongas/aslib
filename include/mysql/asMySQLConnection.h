@@ -6,15 +6,9 @@
 /*
 * 封装MYSQL的连接,封装基础api，作为组件。结果集不在此
 */
-class asMySQLThread;
-class asMySQLQueryMgr;
-class asMySQLStmt;
-
 class asMySQLConnection final
 {
-	friend class asMySQLThread;
-	friend class asMySQLQueryMgr;
-	friend class asMySQLStmt;
+
 public:
 	asMySQLConnection();
 	~asMySQLConnection();
@@ -40,7 +34,7 @@ public:
 	const char* GetErrorString();
 
 	u32 GetErrorCode();
-private:
+public:
 	MYSQL*			m_conn;
 	std::string		m_host;
 	std::string		m_user;

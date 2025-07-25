@@ -1,6 +1,7 @@
 ﻿#include "../../../include/mysql/stmt/asMySQLStmt.h"
 #include "../../../include/tools/asStringUtils.hpp"
 #include "../../../include/mysql/stmt/asMySQLStmtQuery.h"
+#include "../../../include/log/asLogger.h"
 using namespace astronaut;
 asMySQLStmt::asMySQLStmt(asMySQLStmtQuery* conn)
 	:m_query(conn),m_stmt(nullptr), m_inBinds(nullptr),m_outBinds(nullptr),
@@ -135,7 +136,7 @@ i32 asMySQLStmt::InitStmtParams(const char* in, const char* out, const char* sql
 			}
 			else
 			{
-				// log
+				AS_LOGGER->LogEx(ERR, "asMySQLStmt::InitStmtParams can't find inParams type,type is %s", vecIn[i].c_str());
 				ret = -1;
 				break;
 			}
@@ -212,7 +213,7 @@ i32 asMySQLStmt::InitStmtParams(const char* in, const char* out, const char* sql
 			}
 			else
 			{
-				// log
+				AS_LOGGER->LogEx(ERR, "asMySQLStmt::InitStmtParams can't find outParams type,type is %s", vecOut[i].c_str());
 				ret = -1;
 				break;
 			}
@@ -238,12 +239,13 @@ i32 asMySQLStmt::PrepareStmt()
 	m_stmt = mysql_stmt_init(m_query->m_mysql.m_conn);
 	if(!m_stmt)
 	{
-		//log
+		AS_LOGGER->Log(ERR, "asMySQLStmt::PrepareStmt, mysql_stmt_init failed");
 		return -1;
 	}
-	if(mysql_stmt_prepare(m_stmt,m_sql.c_str(),(unsigned long)m_sql.length()) != 0)
+	i32 ret = mysql_stmt_prepare(m_stmt, m_sql.c_str(), (unsigned long)m_sql.length());
+	if(ret != 0)
 	{
-		// log
+		AS_LOGGER->LogEx(ERR, "asMySQLStmt::PrepareStmt, mysql_stmt_prepare failed, reason is %s", mysql_stmt_error(m_stmt));
 		return -1;
 	}
 	return 0;
@@ -263,7 +265,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 {
 	if (num < m_inCount)
 	{
-		//log
+		AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num < m_inCount, num is %u, m_inCount is %u", num, m_inCount);
 		return -1;
 	}
 	ResetBindData();
@@ -279,7 +281,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&value, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -290,7 +292,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&value, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -302,7 +304,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&c, 0);
 				if (--num < 0)
 				{
-					//log 
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -313,7 +315,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&c, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -324,7 +326,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&s, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -335,7 +337,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&s, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -346,7 +348,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&value, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -357,7 +359,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&value, 0);
 				if (--num < 0)
 				{
-					//log 
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -369,7 +371,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				t->SetData(tt->year.u32p, tt->month.u32p, tt->day.u32p, tt->hour.u32p, tt->minutes.u32p, tt->second.u32p);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -383,7 +385,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				num -= 2;
 				if (num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
@@ -394,13 +396,13 @@ i32 asMySQLStmt::ExecuteQuery(u32 num, va_list& args)
 				m_inParams[i]->SetData(&f, 0);
 				if (--num < 0)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, num = 0, i = %d", i);
 					return -1;
 				}
 			}
 			break;
 			default:
-				//log
+				AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, error type, type is %c", m_inParams[i]->m_type);
 				return -1;
 			}
 		}
@@ -433,7 +435,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(int))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(int);
@@ -445,7 +447,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(unsigned int))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(unsigned int);
@@ -457,7 +459,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(char))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(char);
@@ -469,7 +471,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(unsigned char))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(unsigned char);
@@ -481,7 +483,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(short))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(short);
@@ -493,7 +495,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(unsigned short))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(unsigned short);
@@ -505,7 +507,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(long long))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(long long);
@@ -517,7 +519,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(unsigned long long))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(unsigned long long);
@@ -530,7 +532,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				YMDHMS* tt = reinterpret_cast<YMDHMS*>(pData);
 				if (Len < sizeof(YMDHMS))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				t->SetData(tt->year.u32p, tt->month.u32p, tt->day.u32p, tt->hour.u32p, tt->minutes.u32p, tt->second.u32p);
@@ -546,7 +548,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, strLen);
 				if (Len < sizeof(unsigned int) + strLen)
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += strLen;
@@ -558,7 +560,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 				m_inParams[i]->SetData(pData, 0);
 				if (Len < sizeof(float))
 				{
-					//log
+					AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, Len is not enough, i = %d", i);
 					return -1;
 				}
 				pData += sizeof(float);
@@ -566,7 +568,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 			}
 			break;
 			default:
-				//log
+				AS_LOGGER->LogEx(ERR, "asMySQLStmt::ExecuteQuery, error type, type is %c", m_inParams[i]->m_type);
 				return -1;
 			}
 		}
@@ -583,7 +585,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 	return ret;
 }
 
-u8 asMySQLStmt::GetResultType()
+u8 asMySQLStmt::GetQueryType()
 {
 	return m_resFlag;
 }
@@ -618,20 +620,21 @@ i32 asMySQLStmt::Execute(MYSQL_BIND* binds)
 	{
 		if (mysql_stmt_bind_param(m_stmt, binds))
 		{
-			//log
+			AS_LOGGER->LogEx(ERR, "asMySQLStmt::Execute,mysql_stmt_bind_param failed, reason is %s", mysql_stmt_error(m_stmt));
 			return -1;
 		}
 	}
 	if (mysql_stmt_execute(m_stmt))
 	{
-		//log
+		AS_LOGGER->LogEx(ERR, "asMySQLStmt::Execute,mysql_stmt_execute failed, reason is %s", mysql_stmt_error(m_stmt));
 		return -1;
 	}
 	m_query->m_affectCount = (u32)mysql_stmt_affected_rows(m_stmt);
 	m_query->m_insertId = (m_resFlag & AS_DB_STMT_RESULT_INSERT) ? (u64)mysql_stmt_insert_id(m_stmt) : 0;
 	return 0;
 }
-i32 asMySQLStmt::GetResults()
+
+i32 asMySQLStmt::GetResultsToBuffer()
 {
 	m_query->m_rows = 0;
 	m_query->m_results.Empty();
@@ -639,12 +642,12 @@ i32 asMySQLStmt::GetResults()
 	{
 		if (mysql_stmt_bind_result(m_stmt, m_outBinds))
 		{
-			//log
+			AS_LOGGER->LogEx(ERR, "asMySQLStmt::GetResultsToBuffer,mysql_stmt_bind_result failed, reason is %s", mysql_stmt_error(m_stmt));
 			return -1;
 		}
 		if (mysql_stmt_store_result(m_stmt))
 		{
-			//log
+			AS_LOGGER->LogEx(ERR, "asMySQLStmt::GetResultsToBuffer,mysql_stmt_store_result failed, reason is %s", mysql_stmt_error(m_stmt));
 			return -1;
 		}
 		u64 rows = mysql_stmt_num_rows(m_stmt);
@@ -696,7 +699,7 @@ i32 asMySQLStmt::GetResults()
 					case 'c':
 						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(float));
 					default:
-						//log
+						AS_LOGGER->LogEx(ERR, "asMySQLStmt::GetResultsToBuffer,error type, type is %c", m_outParams[i]->m_type);
 						return -1;
 					}
 				}

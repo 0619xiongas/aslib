@@ -1,5 +1,5 @@
 ﻿#include "../../../include/mysql/asMySQLConnection.h"
-
+#include "../../../include/log/asLogger.h"
 asMySQLConnection::asMySQLConnection():m_conn(NULL),m_port(0)
 {
 }
@@ -54,7 +54,7 @@ void asMySQLConnection::SelectDB(const char* db)
 		}
 		else
 		{
-			// log
+			AS_LOGGER->LogEx(ERR, "asMySQLConnection::SelectDB mysql_select_db failed! reason is %s", mysql_error(m_conn));
 		}
 	}
 }
@@ -109,14 +109,14 @@ bool asMySQLConnection::Connect()
 		m_conn = mysql_init(NULL);
 		if (!m_conn)
 		{
-			// log
+			AS_LOGGER->LogEx(ERR, "asMySQLConnection::Connect mysql_init failed! reason is %s", mysql_error(m_conn));
 			return false;
 		}
 		my_bool reconn = 1;
 		mysql_options(m_conn, MYSQL_OPT_RECONNECT, &reconn);
 		if (!mysql_real_connect(m_conn, m_host.c_str(), m_user.c_str(), m_pwd.c_str(), m_db.c_str(), m_port, NULL, CLIENT_MULTI_STATEMENTS | CLIENT_INTERACTIVE))
 		{
-			// log
+			AS_LOGGER->LogEx(ERR, "asMySQLConnection::Connect mysql_real_connect failed! reason is %s", mysql_error(m_conn));
 			mysql_close(m_conn);
 			m_conn = NULL;
 			return false;
