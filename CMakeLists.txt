@@ -89,6 +89,7 @@ target_include_directories(aslib PUBLIC
 link_directories(
     ${Boost_LIBRARY_DIR}
     ${LIBUV_LIB_DIR}
+    ${MYSQL_LIB_DIR}
 )
 target_link_libraries(aslib PUBLIC 
     boost_filesystem

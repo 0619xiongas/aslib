@@ -1,15 +1,9 @@
 ﻿#include "../../../include/mysql/stmt/asMySQLStmtThread.h"
 #include "../../../include/log/asLogger.h"
-#include "../../../include/file/asFileReader.h"
-#include "../../../include/tools/asStringUtils.hpp"
 #include "../../../include/time/asTime.h"
 #include "../../../include/buffer/asReadBuffer.h"
 #include "../../../include/buffer/asNodeBuffer.h"
-#ifdef _WIN32
-#include "../../../third/cJSON/cJSON.h"
-#else
-#include <cJSON/cJSON.h>
-#endif
+
 asMySQLStmtThread::asMySQLStmtThread()
 {
 	m_log = false;
@@ -25,79 +19,6 @@ bool asMySQLStmtThread::Init(const char* host, u16 port, const char* user, const
 	return m_query.m_mysql.Init(host, port, user, pwd, db, character);
 }
 
-bool asMySQLStmtThread::LoadStmtConfig(const char* filePath)
-{
-	asFileReader reader;
-	reader.SetPath(filePath);
-	reader.OpenFile();
-	reader.ReadAll();
-	asBuffer buf = reader.GetInnerBuffer();
-	cJSON* root = cJSON_Parse(buf.Buf());
-	if (cJSON_IsInvalid(root))
-	{
-		AS_LOGGER->Log(ERR, "asMySQLStmtThread::LoadStmtConfig, file is not a json data");
-		cJSON_Delete(root);
-		return false;
-	}
-	if (!cJSON_IsArray(root))
-	{
-		AS_LOGGER->Log(ERR, "asMySQLStmtThread::LoadStmtConfig, file is not a json array data");
-		cJSON_Delete(root);
-		return false;
-	}
-	bool ret = true;
-	i32 size = cJSON_GetArraySize(root);
-	for (i32 i = 0; i < size; ++i)
-	{
-		cJSON* node = cJSON_GetArrayItem(root, i);
-		if (cJSON_IsInvalid(node) || !cJSON_IsObject(node))
-		{
-			AS_LOGGER->Log(ERR, "asMySQLStmtThread::LoadStmtConfig, node is not a json object");
-			ret = false;
-			break;
-		}
-		cJSON* json_id = cJSON_GetObjectItemCaseSensitive(node, "id");
-		if (!cJSON_IsString(json_id) || !json_id->valuestring)
-		{
-			ret = false;
-			break;
-		}
-		u32 id = astronaut::HexString2UInt32(json_id->valuestring);
-		cJSON* json_inParams = cJSON_GetObjectItemCaseSensitive(node, "inParams");
-		if (!cJSON_IsString(json_inParams) || !json_inParams->valuestring)
-		{
-			ret = false;
-			break;
-		}
-		cJSON* json_outParams = cJSON_GetObjectItemCaseSensitive(node, "outParams");
-		if (!cJSON_IsString(json_outParams) || !json_outParams->valuestring)
-		{
-			ret = false;
-			break;
-		}
-		cJSON* json_sql = cJSON_GetObjectItemCaseSensitive(node, "sql");
-		if (!cJSON_IsString(json_sql) || !json_sql->valuestring)
-		{
-			ret = false;
-			break;
-		}
-		cJSON* json_type = cJSON_GetObjectItemCaseSensitive(node, "type");
-		if (!cJSON_IsNumber(json_type) || !json_type->valueint)
-		{
-			ret = false;
-			break;
-		}
-		if (m_query.PrepareStmtParams(id, json_inParams->valuestring, json_outParams->valuestring, json_sql->valuestring, (char)json_type->valueint) != 0)
-		{
-			ret = false;
-			break;
-		}
-		m_map[id] = (char)json_type->valueint;
-	}
-	cJSON_Delete(root);
-	return ret;
-}
-
 bool asMySQLStmtThread::LoadStmtConfig(u32 id, const char* in, const char* out, const char* sql, const char flag)
 {
 	if (m_query.PrepareStmtParams(id, in, out, sql, flag) == 0)
@@ -105,6 +26,12 @@ bool asMySQLStmtThread::LoadStmtConfig(u32 id, const char* in, const char* out, 
 		m_map[id] = flag;
 		return true;
 	}
+	return false;
+}
+
+bool asMySQLStmtThread::LoadStmtConfig(const char* filePath)
+{
+	AS_LOGGER->LogEx(TIP, "CALL BASE asMySQLStmtThread::LoadStmtConfig FUNCTION");
 	return false;
 }
 

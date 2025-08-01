@@ -13,7 +13,7 @@ public:
 	{
 		m_threads = nullptr;
 		m_count = 0;
-		m_groupID = 0
+		m_groupID = 0;
 	}
 	asMsgThreadGroup(u32 count)
 	{
@@ -25,7 +25,7 @@ public:
 	{
 		Clear();
 	}
-	// ÊÍ·ÅÄÚ´æ
+	// ï¿½Í·ï¿½ï¿½Ú´ï¿½
 	void Clear()
 	{
 		if (m_threads)
@@ -105,7 +105,7 @@ public:
 	{
 		return m_count;
 	}
-	void SetThreadName(const char* name, const wchar* wName)
+	void SetThreadsName(const char* name, const wchar_t* wName)
 	{
 		for (u32 i = 0; i < m_count; ++i)
 		{

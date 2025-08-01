@@ -11,10 +11,10 @@ public:
 	~asMySQLStmtThread();
 
 	bool Init(const char* host, u16 port, const char* user, const char* pwd, const char* db, const char* character,bool log);
-	bool LoadStmtConfig(const char* filePath);
 	bool LoadStmtConfig(u32 id, const char* in, const char* out, const char* sql, const char flag);
 
 protected:
+	virtual bool LoadStmtConfig(const char* filePath);
 	virtual bool OnNewMsg(asMsg& msg);
 	virtual bool SendResponse(u32 connectID, asNetMsgHead* head, char* data, u32 len) = 0;
 private:
