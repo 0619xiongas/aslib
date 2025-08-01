@@ -20,13 +20,17 @@ public:
 
 	bool StartThread(asThreadFunc* func);
 
+	bool StartThread();
+
+	void Exit();
+
 	void StopThread();
 
 	bool IsRunning();
 
 	asThreadHandle GetHandle();
 
-	void SetThreadName(const char* name,const wchar_t* wname);
+	void SetThreadName(const char* name, const wchar_t* wname);
 
 	static void Sleep(u32 ms);
 
@@ -34,12 +38,15 @@ public:
 
 	static asThreadHandle GetCurrentHandle();
 
-	static void SetCurrentThreadName(const char* name,const wchar_t* wname);
+	static void SetCurrentThreadName(const char* name, const wchar_t* wname);
 
 protected:
+	virtual void ThreadFunc() = 0;
+	bool IsNeedExit() const;
+protected:
 	std::thread* m_thread;
-	asThreadFunc* m_func;
-private:
+	bool m_exit;
+public:
 	u32 m_threadId;
 };
 

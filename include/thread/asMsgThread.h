@@ -1,13 +1,13 @@
 ﻿#ifndef AS_MSGTHREAD_H
 #define AS_MSGTHREAD_H
 
-#include "asWorkThread.h"
+#include "asBaseThread.h"
 #include <list>
 #include <mutex>
 #include <condition_variable>
 #include "../asMsgBaseDefine.h"
 using namespace asThread;
-class asMsgThread : public asWorkThread
+class asMsgThread : public asBaseThread
 {
 public:
 	asMsgThread();

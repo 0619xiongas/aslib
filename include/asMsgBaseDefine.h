@@ -41,6 +41,8 @@ namespace asThread
 #define AS_THREAD_CLEAR 3
 #define AS_THREAD_SLEEP 4
 
+#define AS_THREAD_MAX_GROUP_COUNT		512 //单组最大线程数
+
 #define AS_THREADMSG_LOGGER				100 //日志消息
 #define AS_THREADMSG_THREAD				101 //线程间消息
 //NET

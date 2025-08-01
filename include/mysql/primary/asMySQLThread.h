@@ -1,7 +1,7 @@
 ﻿#ifndef AS_MYSQLTHREAD_H
 #define AS_MYSQLTHREAD_H 
 
-#include "../../thread/asWorkThread.h"
+#include "../../thread/asBaseThread.h"
 #include "../asMySQLConnection.h"
 #include "asMySQLQueryResult.h"
 #include <list>
@@ -12,7 +12,7 @@ class asMySQLQueryMgr;
 /*
 * 实现一个数据库执行语句线程
 */
-class asMySQLThread : public asWorkThread
+class asMySQLThread : public asBaseThread
 {
 	friend class asMySQLQueryMgr;
 public:
@@ -36,7 +36,6 @@ private:
 	std::mutex m_lock;
 	std::condition_variable m_condition;
 	std::function<void(asMySQLCmdParam&)> m_addResultFunc;
-	bool m_exit;
 };
 
 #endif // !AS_MYSQLTHREAD_H

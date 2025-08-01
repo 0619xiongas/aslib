@@ -1,4 +1,4 @@
-#include "../../../include/mysql/stmt/asMySQLStmtThread.h"
+ï»¿#include "../../../include/mysql/stmt/asMySQLStmtThread.h"
 #include "../../../include/log/asLogger.h"
 #include "../../../include/file/asFileReader.h"
 #include "../../../include/tools/asStringUtils.hpp"
@@ -98,6 +98,21 @@ bool asMySQLStmtThread::LoadStmtConfig(const char* filePath)
 	return ret;
 }
 
+bool asMySQLStmtThread::LoadStmtConfig(u32 id, const char* in, const char* out, const char* sql, const char flag)
+{
+	if (m_query.PrepareStmtParams(id, in, out, sql, flag) == 0)
+	{
+		m_map[id] = flag;
+		return true;
+	}
+	return false;
+}
+
+bool asMySQLStmtThread::OnNewMsg(asMsg& msg)
+{
+	return false;
+}
+
 bool asMySQLStmtThread::OnNewNetMsg(asNetMsgHead* head, const char* data, u32 len, u32 connectID)
 {
 	auto itr = m_map.find(head->m_msgId);
@@ -134,16 +149,10 @@ bool asMySQLStmtThread::OnNewNetMsg(asNetMsgHead* head, const char* data, u32 le
 	return ret;
 }
 
-bool asMySQLStmtThread::OnNewMsg(asMsg& msg)
-{
-	return false;
-}
-
 bool asMySQLStmtThread::OnNullRecord(u32 id, asNetMsgHead* head, const char* data, u32 len, u32 connectID)
 {
 	if (m_query.QueryByID(id, len, data) == 0)
 	{
-		// ²åÈë·µ»Ø
 		if (m_query.GetQueryType(id) & AS_DB_STMT_RESULT_INSERT)
 		{
 			u32 rows = m_query.m_affectCount;
@@ -217,11 +226,11 @@ void asMySQLStmtThread::HandleMessage(asMsg& msg)
 	{
 		asNetMsgHead* head = (asNetMsgHead*)msg.params[1];
 		char* data = (char*)msg.params[1];
-		OnNewNetMsg(head, data + AS_MSG_HEAD_SIZE, head->m_len - AS_MSG_HEAD_SIZE, msg.params[0]);
+		OnNewNetMsg(head, data + AS_MSG_HEAD_SIZE, head->m_len - AS_MSG_HEAD_SIZE, (u32)msg.params[0]);
 		AS_SAFE_DELETE_ARRAY(data)
 	}
 	else
 	{
-		OnNewMsg(msg)
+		OnNewMsg(msg);
 	}
 }

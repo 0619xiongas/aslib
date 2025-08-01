@@ -1,7 +1,8 @@
 ﻿#include "../../include/thread/asBaseThread.h"
 #include <chrono>
+#include <functional>
 asBaseThread::asBaseThread()
-	:m_thread(nullptr),m_func(nullptr),m_threadId(0)
+	:m_thread(nullptr),m_threadId(0),m_exit(false)
 {
 }
 
@@ -14,12 +15,27 @@ bool asBaseThread::StartThread(asThreadFunc* func)
 {
 	if (func)
 	{
-		m_func = func;
-		m_thread = new std::thread(*m_func);
+		m_thread = new std::thread(*func);
 		return true;
 	}
 	return false;
 }
+
+bool asBaseThread::StartThread()
+{
+	if (m_thread) return false;
+	m_thread = new std::thread(std::bind(&asBaseThread::ThreadFunc, this));
+	if (m_thread)
+	{
+		return true;
+	}
+	return false;
+}
+void asBaseThread::Exit()
+{
+	m_exit = true;
+}
+
 
 void asBaseThread::StopThread()
 {
@@ -86,4 +102,9 @@ void asBaseThread::SetCurrentThreadName(const char* name, const wchar_t* wname)
 #else 
 	pthread_setname_np(handle, name);
 #endif
+}
+
+bool asBaseThread::IsNeedExit() const
+{
+	return m_exit;
 }

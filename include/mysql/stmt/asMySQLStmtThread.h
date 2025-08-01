@@ -1,7 +1,7 @@
-#ifndef AS_MYSQLSTMTTHREAD_H
+ï»¿#ifndef AS_MYSQLSTMTTHREAD_H
 #define AS_MYSQLSTMTTHREAD_H
 
-#include "../thread/asMsgThread.h"
+#include "../../thread/asMsgThread.h"
 #include "asMySQLStmtQuery.h"
 using namespace asNet;
 class asMySQLStmtThread : public asMsgThread
@@ -12,23 +12,23 @@ public:
 
 	bool Init(const char* host, u16 port, const char* user, const char* pwd, const char* db, const char* character,bool log);
 	bool LoadStmtConfig(const char* filePath);
+	bool LoadStmtConfig(u32 id, const char* in, const char* out, const char* sql, const char flag);
+
+protected:
+	virtual bool OnNewMsg(asMsg& msg);
+	virtual bool SendResponse(u32 connectID, asNetMsgHead* head, char* data, u32 len) = 0;
 private:
-	// ´¦ÀíÍøÂçÏûÏ¢
+
 	bool OnNewNetMsg(asNetMsgHead* head, const char* data, u32 len, u32 connectID);
-	// ´¦Àí·ÇÍøÂçÏûÏ¢
-	bool OnNewMsg(asMsg& msg);
-	// insert , delete, update ÎŞ·µ»Ø½á¹ûµÄ
+
 	bool OnNullRecord(u32 id, asNetMsgHead* head, const char* data, u32 len, u32 connectID);
-	// ·µ»ØÒ»Ìõ¼ÇÂ¼
+
 	bool OnOneRecord(u32 id, asNetMsgHead* head, const char* data, u32 len, u32 connectID);
-	// ·µ»Ø¶àÌõ¼ÇÂ¼
+
 	bool OnMultiRecord(u32 id, asNetMsgHead* head, const char* data, u32 len, u32 connectID);
 
-	// ·¢ËÍ²éÑ¯½á¹û°ü ×ÓÀàĞèÒªÊµÏÖ
-	virtual bool SendResponse(u32 connectID, asNetMsgHead* head, char* data, u32 len) = 0;
-
 	virtual void HandleMessage(asMsg& msg) override;
-private:
+protected:
 	asMySQLStmtQuery	m_query;
 	std::map<u32, char>	m_map;
 	bool				m_log;
