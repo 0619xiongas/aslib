@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "asBaseDefine.h"
+#include "algorithm/asSnowFlake.h"
 class SQLProducer
 {
 public:
@@ -15,13 +16,13 @@ public:
 
 	void DoSQLDelete();
 
-	void OnSQL_CB();
+	void DoSQLInsert();
+
+	void OnSQL_CB(asNetMsgHead* head, char* data, u32 len);
 private:
-	void OnSQLUpdate_CB();
-
-	void OnSQLSelect_CB();
-
-	void OnSQLDelete_CB();
+	void OnSQLSelect_CB(asNetMsgHead* head, char* data, u32 len);
 	std::vector<i64> m_ids;
 	u32 m_idx = 0;
+	u32 m_idxRandom = 0;
+	asSnowFlake m_sf;
 };

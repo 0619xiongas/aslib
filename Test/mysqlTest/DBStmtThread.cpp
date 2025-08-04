@@ -81,7 +81,9 @@ bool DBStmtThread::LoadStmtConfig(const char* filePath)
 			ret = false;
 			break;
 		}
-		if (m_query.PrepareStmtParams(id, json_inParams->valuestring, json_outParams->valuestring, json_sql->valuestring, (char)json_type->valueint) != 0)
+		char* in = strlen(json_inParams->valuestring) > 0 ? json_inParams->valuestring : nullptr;
+		char* out = strlen(json_outParams->valuestring) > 0 ? json_outParams->valuestring : nullptr;
+		if (m_query.PrepareStmtParams(id, in, out, json_sql->valuestring, (char)json_type->valueint) != 0)
 		{
 			ret = false;
 			break;

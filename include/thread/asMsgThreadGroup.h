@@ -85,11 +85,12 @@ public:
 			}
 		}
 		m_threads[idx].PostMsg(msg);
+		return true;
 	}
 	bool PostMsgToMin(u32 msgID, u32 subID, ulint param1, ulint param2, ulint param3)
 	{
 		asMsg msg(msgID, subID, param1, param2, param3);
-		PostMsgToMin(msg);
+		return PostMsgToMin(msg);
 	}
 	bool SetThreadGroupNum(u32 num)
 	{

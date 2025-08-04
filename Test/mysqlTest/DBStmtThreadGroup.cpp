@@ -17,7 +17,7 @@ void DBStmtThreadGroup::StartGroup(const char* host, u16 port, const char* user,
 	{
 		if (m_threads[i].Init(host, port, user, pwd, db, character, false))
 		{
-			if (m_threads[i].LoadStmtConfig("sql.json"))
+			if (m_threads[i].LoadStmtConfig("E:/aslib/Test/mysqlTest/bin/sql.json"))
 			{
 				AS_LOGGER->LogEx(TIP, "DBStmtThread Load Config success, i = %u", i);
 			}

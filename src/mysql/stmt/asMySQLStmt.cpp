@@ -543,7 +543,7 @@ i32 asMySQLStmt::ExecuteQuery(u32 len, const char* data)
 			case 'a':
 			case 'b':
 			{
-				unsigned int strLen = astronaut::String2UInt32(pData);
+				unsigned int strLen = (unsigned int)*(unsigned int*)pData;
 				pData += sizeof(unsigned int);
 				m_inParams[i]->SetData(pData, strLen);
 				if (Len < sizeof(unsigned int) + strLen)

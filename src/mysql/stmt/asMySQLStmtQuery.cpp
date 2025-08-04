@@ -40,11 +40,19 @@ i32 asMySQLStmtQuery::PrepareStmtParams(u32 id, const char* stmtStr, const char 
 i32 asMySQLStmtQuery::PrepareStmtParams(u32 id, const char* in, const char* out, const char* sql, const char flag)
 {
 	asMySQLStmt stmt(this);
-	if (stmt.InitStmtParams(in, out, sql, flag) != 0)
+	auto ret = m_stmts.insert(std::pair<u32, asMySQLStmt>(id, stmt));
+	if (ret.second)
 	{
+		if (ret.first->second.InitStmtParams(in, out, sql, flag) != 0)
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		AS_LOGGER->LogEx(ERR, "asMySQLStmtQuery::PrepareStmtParams, insert into map failed, id is %u", id);
 		return -1;
 	}
-	m_stmts.insert(std::pair<u32, asMySQLStmt>(id, stmt));
 	return 0;
 }
 

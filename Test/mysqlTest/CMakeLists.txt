@@ -24,11 +24,15 @@ set(MYSQL_INCLUDE "${ASLIB_ROOT}/third/mysql/include")
 set(CJSON_LIB "${ASLIB_ROOT}/third/cJSON/lib")
 set(CJSON_INCLUDE "${ASLIB_ROOT}/third/cJSON/include")
 
+set(VLD_LIB "${ASLIB_ROOT}/third/vld/lib/x64")
+set(VLD_INCLUDE "${ASLIB_ROOT}/third/vld/include")
+
 include_directories(
     ${ASLIB_INCLUDE}
     ${BOOST_INCLUDE}
     ${MYSQL_INCLUDE}
     ${CJSON_INCLUDE}
+    ${VLD_INCLUDE}
 )
 
 link_directories(
@@ -36,6 +40,7 @@ link_directories(
     ${BOOST_LIB}
     ${MYSQL_LIB}
     ${CJSON_LIB}
+    ${VLD_LIB}
 )
 
 add_executable(mysql_test
@@ -44,14 +49,22 @@ add_executable(mysql_test
     DBStmtThread.h
     DBStmtThreadGroup.cpp
     DBStmtThreadGroup.h
+    SQLProducer.cpp
+    SQLProducer.h
 )
 
 target_link_libraries(mysql_test 
     aslib
     libmysql
     cJSON
+    vld
 )
-set_target_properties(mysql_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/mysql_test")
+set_target_properties(mysql_test PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/bin/mysql_test"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/mysql_test"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}/bin/mysql_test"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_SOURCE_DIR}/bin/mysql_test"
+)
 
 
 if(WIN32)
