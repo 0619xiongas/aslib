@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(uvTest)
 
-if(MSVC)
-    foreach(flag_var
-        CMAKE_C_FLAGS_DEBUG
-        CMAKE_CXX_FLAGS_DEBUG
-        CMAKE_C_FLAGS_DEBUG_INIT
-        CMAKE_CXX_FLAGS_DEBUG_INIT)
-        string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-    endforeach()
-endif()
+# if(MSVC)
+#     foreach(flag_var
+#         CMAKE_C_FLAGS_DEBUG
+#         CMAKE_CXX_FLAGS_DEBUG
+#         CMAKE_C_FLAGS_DEBUG_INIT
+#         CMAKE_CXX_FLAGS_DEBUG_INIT)
+#         string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+#     endforeach()
+# endif()
 
 # 假设 aslib 库已编译好，lib和include目录与Test同级
 set(ASLIB_ROOT "${CMAKE_SOURCE_DIR}/../../")
@@ -21,6 +21,8 @@ set(BOOST_LIB "${ASLIB_ROOT}/third/boost/lib")
 set(LIBUV_LIB "${ASLIB_ROOT}/third/libuv/lib")
 set(BOOST_INCLUDE "${ASLIB_ROOT}/third/boost/include")
 set(LIBUV_INCLUDE "${ASLIB_ROOT}/third/libuv/include")
+set(VLD_LIB "${ASLIB_ROOT}/third/vld/lib/x64")
+set(VLD_INCLUDE "${ASLIB_ROOT}/third/vld/include")
 
 file(GLOB NETCPP_PROTO_SRCS "${CMAKE_SOURCE_DIR}/public/netcpp/*.pb.cc")
 include_directories(${CMAKE_SOURCE_DIR}/public/netcpp)
@@ -29,6 +31,7 @@ include_directories(
     ${ASLIB_INCLUDE}
     ${BOOST_INCLUDE}
     ${LIBUV_INCLUDE}
+    ${VLD_INCLUDE}
 )
 include_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/include)
 
@@ -36,6 +39,7 @@ link_directories(
     ${ASLIB_LIB}
     ${BOOST_LIB}
     ${LIBUV_LIB}
+    ${VLD_LIB}
 )
 link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib)
 
@@ -58,17 +62,34 @@ add_executable(uvClient
 # 链接 aslib、boost、libuv
 target_link_libraries(ucServer
     aslib
-    uv
+    uv_a
     libprotobufd
+    ws2_32
+    iphlpapi
+    userenv
+    dbghelp
+    psapi
+    vld
 )
 
 target_link_libraries(uvClient
     aslib
-    uv
+    uv_a
     libprotobufd
+    ws2_32
+    iphlpapi
+    userenv
+    dbghelp
+    psapi
+    vld
 )
 
 # 可选：设置输出目录
 set_target_properties(ucServer PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/server")
 set_target_properties(uvClient PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/client")
+
+if(MSVC)
+    target_compile_options(ucServer PRIVATE $<$<CONFIG:Debug>:/MTd>)
+    target_compile_options(uvClient PRIVATE $<$<CONFIG:Debug>:/MTd>)
+endif()
 

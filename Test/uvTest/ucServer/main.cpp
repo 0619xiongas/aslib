@@ -6,6 +6,7 @@
 #include <csignal>
 #include <google/protobuf/message.h>
 #include "log/asLogger.h"
+#include "vld.h"
 auto g_server = asSingleton<uvTestServer>::instance();
 bool g_exit = false;
 void SignalHandler(int signal) {

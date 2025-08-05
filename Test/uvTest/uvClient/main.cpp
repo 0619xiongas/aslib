@@ -9,6 +9,7 @@
 #include <google/protobuf/message.h>
 #include "buffer/asBuffer.h"
 #include "log/asLogger.h"
+#include "vld.h"
 
 auto g_client = asSingleton<uvTestClient>::instance();
 bool g_exit = false;
