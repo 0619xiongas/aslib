@@ -4,6 +4,7 @@
 #include "cJSON.h"
 #include "log/asLogger.h"
 #include "tools/asStringUtils.hpp"
+#include "SQLProducer.h"
 DBStmtThread::DBStmtThread()
 {
 }
@@ -14,7 +15,7 @@ DBStmtThread::~DBStmtThread()
 
 bool DBStmtThread::SendResponse(u32 connectID, asNetMsgHead* head, char* data, u32 len)
 {
-	std::cout << "DBStmtThread::SendResponse" << std::endl;
+	asSingleton<SQLProducer>::instance()->OnSQL_CB(head, data, len);
 	AS_SAFE_DELETE_ARRAY(data);
 	return false;
 }

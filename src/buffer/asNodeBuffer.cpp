@@ -25,8 +25,38 @@ bool asNodeBuffer::Init(ulint size)
 	return m_buf.Init(size);
 }
 
-bool asNodeBuffer::FormatFrom(const char* buf, ulint len)
+bool asNodeBuffer::FormatFrom(char* buf, ulint len)
 {
+	char flag = 0;
+	ulint count = 0;
+	ulint offset = 0;
+	while(flag == 0)
+	{
+		ulint *nLen = (ulint*)(buf + offset);
+		++count;
+		offset += sizeof(ulint) + *nLen;
+		if(offset == len)
+		{
+			flag = 1;
+			break;
+		}
+		else if(offset > len)
+		{
+			flag = 2;
+			break;
+		}
+	}
+	if(flag == 1)
+	{
+		if(!m_buf.Init(buf, len))
+			return false;
+		m_count = count;
+		return m_buf.SetSize(len);
+	}
+	else if(flag == 2)
+	{
+		return false;
+	}
 	return false;
 }
 
@@ -119,11 +149,11 @@ bool asNodeBuffer::WriteSerialize‌(const void* buf, ulint len)
 	if (m_offset == AS_INVAILD_U64)
 		return false;
 
-	if (len + sizeof(ulint) + m_buf.Size() > m_buf.MaxSize())
+	if (len + sizeof(u32) + m_buf.Size() > m_buf.MaxSize())
 		return false;
 
-	ulint tLen = len;
-	if (m_buf.WriteBuf(&tLen, sizeof(ulint)))
+	u32 tLen = (u32)len;
+	if (m_buf.WriteBuf(&tLen, sizeof(u32)))
 	{
 		return m_buf.WriteBuf(buf, len);
 	}

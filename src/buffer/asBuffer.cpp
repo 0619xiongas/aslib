@@ -191,7 +191,7 @@ bool asBuffer::SubSize(ulint size)
 
 bool asBuffer::SetSize(ulint size)
 {
-	if (size < m_maxSize)
+	if (size <= m_maxSize)
 	{
 		m_curSize = size;
 		return true;

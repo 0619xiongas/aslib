@@ -59,7 +59,7 @@ public:
     // 初始化
     bool Init(ulint size);
     // 解析这段buf，不管理buf的析构
-    bool FormatFrom(const char* buf, ulint len);
+    bool FormatFrom(char* buf, ulint len);
     // 数据段个数
     ulint Count() const;
     //使用的内存大小

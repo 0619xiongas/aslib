@@ -143,6 +143,18 @@ bool asMySQLStmtThread::OnMultiRecord(u32 id, asNetMsgHead* head, const char* da
 		asDBNetParam res;
 		res.param = *param;
 		res.rows = rows;
+		u32 sendLen = sizeof(asNetMsgHead) + sizeof(asDBNetParam) + (u32)nb.Size();
+		head->m_len = sendLen;
+		char* sendBuf = new char[sendLen];
+
+		::memcpy(sendBuf, head, AS_MSG_HEAD_SIZE);
+		::memcpy(sendBuf + AS_MSG_HEAD_SIZE, &res, sizeof(asDBNetParam));
+		if (nb.Size() > 0)
+		{
+			::memcpy(sendBuf + AS_MSG_HEAD_SIZE + sizeof(asDBNetParam), nb.Buf(), nb.Size());
+		}
+		SendResponse(connectID, (asNetMsgHead*)sendBuf, sendBuf, sendLen);
+		return true;
 	}
 	return false;
 }

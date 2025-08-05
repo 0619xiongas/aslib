@@ -35,7 +35,7 @@ struct YMDHMS
 
 	void Zero();
 	bool IsZero();
-	void GetLocalTime(char* buf);
+	void FormatTime(char* buf);
 	Union64 GetTimeStamp();
 };
 

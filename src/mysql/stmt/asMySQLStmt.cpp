@@ -694,7 +694,7 @@ i32 asMySQLStmt::GetResultsToBuffer()
 					break;
 					case 'a':
 					case 'b':
-						m_query->m_results.Write(m_outParams[i]->GetData(), m_outParams[i]->m_len);
+						m_query->m_results.WriteSerialize‌(m_outParams[i]->GetData(), m_outParams[i]->m_len);
 						break;
 					case 'c':
 						m_query->m_results.Write(m_outParams[i]->GetData(), sizeof(float));

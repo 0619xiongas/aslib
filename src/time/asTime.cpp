@@ -22,16 +22,24 @@ void YMDHMS::Zero()
 
 bool YMDHMS::IsZero()
 {
-	return false;
+	return year.i32p == 0 && month.i32p == 0 && day.i32p == 0 &&
+		yday.i32p == 0 && wday.i32p == 0 && hour.i32p == 0 &&
+		minutes.i32p == 0 && second.i32p == 0;
 }
 
-void YMDHMS::GetLocalTime(char* buf)
+void YMDHMS::FormatTime(char* buf)
 {
+	snprintf(buf, TIME_STR_MAX_LEN, "%4d-%02d-%02d %02d:%02d:%02d",
+		year.i32p, month.i32p, day.i32p, hour.i32p, minutes.i32p, second.i32p);
 }
 
 Union64 YMDHMS::GetTimeStamp()
 {
-	return Union64();
+	Union64 un;
+	un.i64p = 0;
+	if(IsZero()) return un;
+	un.i64p = asTime::GetTimeStamp(*this);
+	return un;
 }
 
 

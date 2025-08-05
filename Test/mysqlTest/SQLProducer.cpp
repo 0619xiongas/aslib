@@ -5,6 +5,7 @@
 #include "tools/asStringUtils.hpp"
 #include <iostream>
 #include "buffer/asNodeBuffer.h"
+#include "buffer/asReadBuffer.h"
 const char* g_blob_update = "This is SQLProducer Class Update\0";
 const char* g_blob = "This is SQLProducer Class\0";
 
@@ -124,6 +125,41 @@ void SQLProducer::OnSQL_CB(asNetMsgHead* head, char* data, u32 len)
 
 void SQLProducer::OnSQLSelect_CB(asNetMsgHead* head, char* data, u32 len)
 {
+	asNodeBuffer nb;
+	data += AS_MSG_HEAD_SIZE;
+	asDBNetParam* param = (asDBNetParam*)data;
+	if (param->rows > 0)
+	{
+		asReadBuffer rb;
+		nb.FormatFrom(data + sizeof(asDBNetParam), len - AS_MSG_HEAD_SIZE - sizeof(asDBNetParam));
+		auto itr = nb.Begin();
+		while (itr.IsInvaild())
+		{
+			rb.Set(itr.Data(), itr.Size());
+			i64 id;
+			std::string name;
+			std::string password;
+			std::string email;
+			i16 age;
+			YMDHMS dt;
+			char gender;
+			std::string info;
+			rb >> id >> name >> password >> email >> age;
+			rb.ReadData(&dt, sizeof(YMDHMS));
+			char timeStr[TIME_STR_MAX_LEN];
+			dt.FormatTime(timeStr);
+			rb >> gender >> info;
+			std::cout << "SQLProducer::OnSQLSelect_CB, id: " << id
+				<< ", name: " << name
+				<< ", password: " << password
+				<< ", email: " << email
+				<< ", age: " << age
+				<< ", birth: " << timeStr
+				<< ", gender: " << gender
+				<< ", info: " << info << std::endl;
 
+			nb.Next(itr);
+		}
+	}
 }
 
