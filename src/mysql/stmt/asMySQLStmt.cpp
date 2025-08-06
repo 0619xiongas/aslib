@@ -2,7 +2,7 @@
 #include "../../../include/tools/asStringUtils.hpp"
 #include "../../../include/mysql/stmt/asMySQLStmtQuery.h"
 #include "../../../include/log/asLogger.h"
-using namespace astronaut;
+
 asMySQLStmt::asMySQLStmt(asMySQLStmtQuery* conn)
 	:m_query(conn),m_stmt(nullptr), m_inBinds(nullptr),m_outBinds(nullptr),
 	m_resFlag(0),m_inCount(0), m_outCount(0), m_inParams(nullptr), m_outParams(nullptr)

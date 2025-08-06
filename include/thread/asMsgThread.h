@@ -6,7 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "../asMsgBaseDefine.h"
-using namespace asThread;
+
 class asMsgThread : public asBaseThread
 {
 public:

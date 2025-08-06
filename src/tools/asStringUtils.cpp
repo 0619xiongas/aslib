@@ -1,6 +1,5 @@
 ﻿#include "../../include/tools/asStringUtils.hpp"
 
-namespace astronaut{
 std::string Int32ToString(i32 a)
 {
 	char num[16] = { 0 };
@@ -156,5 +155,4 @@ void StringSplit(const std::string& strs, const char flag1, const char flag2, st
 		StringSplit(vec[i], flag2, vec1);
 		lists.push_back(vec1);
 	}
-}
 }

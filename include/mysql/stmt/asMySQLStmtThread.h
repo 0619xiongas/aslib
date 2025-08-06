@@ -3,7 +3,7 @@
 
 #include "../../thread/asMsgThread.h"
 #include "asMySQLStmtQuery.h"
-using namespace asNet;
+
 class asMySQLStmtThread : public asMsgThread
 {
 public:

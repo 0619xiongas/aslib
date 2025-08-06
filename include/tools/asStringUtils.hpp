@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-namespace astronaut {
+
 template<typename T>
 u32 StringCopy(T* dst, u32 dstlen, const T* src, u32 srclen)
 {
@@ -63,5 +63,4 @@ void StringSplit(const std::string& strs, char flag, std::vector<std::string>& s
 void StringSplit(const std::string& strs, const char* flag, std::vector<std::string>& strlist);
 void StringSplit(const std::string& strs, const char flag1, const char flag2, std::vector<std::vector<std::string>>& lists);
 
-}
 #endif

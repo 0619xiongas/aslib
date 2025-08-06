@@ -4,7 +4,7 @@
 #include "../../../include/buffer/asWriteBuffer.h"
 #include "../../../include/asMsgBaseDefine.h"
 #include "../../../include/log/asLogger.h"
-using namespace asNet;
+
 
 asSendQueue::asSendQueue():m_size(0)
 {

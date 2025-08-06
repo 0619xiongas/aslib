@@ -57,7 +57,7 @@ bool DBStmtThread::LoadStmtConfig(const char* filePath)
 			ret = false;
 			break;
 		}
-		u32 id = astronaut::HexString2UInt32(json_id->valuestring);
+		u32 id = HexString2UInt32(json_id->valuestring);
 		cJSON* json_inParams = cJSON_GetObjectItemCaseSensitive(node, "inParams");
 		if (!cJSON_IsString(json_inParams) || !json_inParams->valuestring)
 		{
