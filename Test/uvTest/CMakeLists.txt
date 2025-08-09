@@ -41,7 +41,7 @@ link_directories(
     ${LIBUV_LIB}
     ${VLD_LIB}
 )
-link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib)
+link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib/debug)
 
 # ucServer 可执行文件
 add_executable(ucServer

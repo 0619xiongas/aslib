@@ -1,7 +1,7 @@
 #pragma once
 #include "net/uv/asUvNetWork.h"
 #include "asMsgBaseDefine.h"
-using namespace asNet;
+
 class uvTestServer : public asUvNetWork
 {
 public:

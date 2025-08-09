@@ -111,6 +111,16 @@ bool asUvNetWork::TryStopNetWork()
             }
 		});
 	}
+	if (m_isClient)
+	{
+		if (m_connect.data)
+		{
+			asUvSession* session = (asUvSession*)m_connect.data;
+			if (session) delete session;
+			m_connect.data = NULL;
+			session = nullptr;
+		}
+	}
 	for (size_t i = 0;i < m_threads.size();++i)
 	{
 		if (m_threads[i])
@@ -118,8 +128,8 @@ bool asUvNetWork::TryStopNetWork()
 			m_threads[i]->StopThread();
 		}
 	}
-	m_threads.clear();
 	m_isStoped = true;
+	m_threads.clear();
 	return true;
 }
 
@@ -383,6 +393,8 @@ void asUvNetWork::TryConnect(asUvSession* session)
 		{
 			AS_LOGGER->LogEx(LOGTYPE::TIP, "Connect server success!! session id : %u", session->GetId());
 			u32 threadId = session->GetId() % session->m_netWork->m_threadCount;
+			// 移除m_connect.data 的引用 交给uvThread管理session
+			netWork->m_connect.data = NULL;
 			netWork->m_threads[threadId]->PostEvent([threadId, session,netWork]() {
 				netWork->m_threads[threadId]->StopTimer();
 				netWork->HandleAddSession(threadId, session);
@@ -406,6 +418,7 @@ void asUvNetWork::ReConnect(asUvSession* session)
 	m_threads[threadId]->StartTimer([this, session]() {
 		this->TryConnect(session);
 		}, 10 * 1000);
+	AS_LOGGER->LogEx(TIP,"Connect to server ...");
 }
 
 void asUvNetWork::OnAddNewSession(asUvSession& session)

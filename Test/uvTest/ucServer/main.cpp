@@ -37,6 +37,7 @@ int main()
 	google::protobuf::ShutdownProtobufLibrary();
 	asSingleton<uvTestServer>::instance()->TryStopNetWork();
 	asSingleton<uvTestServer>::delete_instance();
+	asSingleton<asLogger>::instance()->ExitThread();
 	asSingleton<asLogger>::delete_instance();
 	system("pause");
 	return 0;

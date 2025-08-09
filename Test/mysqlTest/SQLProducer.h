@@ -3,7 +3,6 @@
 #include "asBaseDefine.h"
 #include "algorithm/asSnowFlake.h"
 #include "asMsgBaseDefine.h"
-using namespace asNet;
 class SQLProducer
 {
 public:

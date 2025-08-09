@@ -28,7 +28,6 @@ int main()
 	AS_LOGGER->Init(nullptr);
 	g_client->Init("127.0.0.1", 10011, 1024 * 10, 1024 * 10, 1, 100);
 	g_client->TryRunNetWork(true);
-
 	while (!g_exit) {
 		auto start = std::chrono::steady_clock::now();
 
@@ -49,6 +48,7 @@ int main()
 	google::protobuf::ShutdownProtobufLibrary();
 	asSingleton<uvTestClient>::instance()->TryStopNetWork();
 	asSingleton<uvTestClient>::delete_instance();
+	asSingleton<asLogger>::instance()->ExitThread();
 	asSingleton<asLogger>::delete_instance();
 	system("pause");
 	return 0;

@@ -3,7 +3,6 @@
 #include "../asMsgBaseDefine.h"
 #include <string>
 
-using namespace asThread;
 
 template<class THREAD>
 class asMsgThreadGroup

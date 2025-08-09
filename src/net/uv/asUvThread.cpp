@@ -41,6 +41,16 @@ bool asUvThread::InitThread()
 				}
 				uv_run(self->m_loop, UV_RUN_NOWAIT);
 			}
+			// 定时器
+			if (self->m_timerFunc)
+			{
+				uv_timer_stop(&self->m_timer);
+				if (!uv_is_closing((uv_handle_t*)&self->m_timer))
+				{
+					uv_close((uv_handle_t*)&self->m_timer, nullptr);
+				}
+				self->m_timerFunc = nullptr;
+			}
 			std::queue<std::function<void()>> tmp;
 			{
 				std::lock_guard<std::mutex> lock(self->m_taskMutex);
@@ -54,16 +64,6 @@ bool asUvThread::InitThread()
 			}
 			// 清理各种资源
 			AS_LOGGER->LogEx(LOGTYPE::TIP, "asUvThread::StopThread, thread id : %lu", (unsigned long*)self->m_thread);
-			// 定时器
-			if (self->m_timerFunc)
-			{
-				self->m_timerFunc = nullptr;
-				uv_timer_stop(&self->m_timer);
-				if (!uv_is_closing((uv_handle_t*)&self->m_timer))
-				{
-					uv_close((uv_handle_t*)&self->m_timer, nullptr);
-				}
-			}
 			// 异步事件
 			if (!uv_is_closing((uv_handle_t*)&self->m_async)) {
 				uv_close((uv_handle_t*)&self->m_async, nullptr);
@@ -129,6 +129,11 @@ void asUvThread::PostEvent(std::function<void()> event)
 
 void asUvThread::StartTimer(std::function<void()> callback, u64 timeout_ms, u64 repeat_ms)
 {
+	if(m_isStoped)
+	{
+		AS_LOGGER->LogEx(TIP,"asUvThread is stopped");
+		return;
+	}
 	auto TimerFunc = [](uv_timer_t* handle)
 		{
 			asUvThread* self = static_cast<asUvThread*>(handle->data);
