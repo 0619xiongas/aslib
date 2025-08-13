@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message ReqBaseInfo
+{
+	int32 id = 1;
+	string str = 2;
+}
+
+message ResBaseInfo
+{
+	int32 ret = 1;
+	int32 id = 2;
+	string str = 3;
+}
