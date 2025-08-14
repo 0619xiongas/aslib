@@ -8,12 +8,12 @@ public:
 	asAsioNetwork();
 	virtual ~asAsioNetwork();
 
-	void Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount);
+	void Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount,std::string netName="");
 
 	bool TryRunNetwork(bool isClient);
 
 	bool TryStopNetwork();
-	// 作为客户端连接到服务器
+	// 作为客户端连接到服务器 阻塞连接
 	u32 ConnectToServer();
 	// 关闭连接
 	void DoCloseSession(u32 sessionId);
@@ -26,6 +26,8 @@ public:
 
 	// 处理网络消息，子类需重写
 	virtual void OnNewMessage(asAsioSession& session, u32 msgId, char* buf);
+	//  设置网络服务名
+	void SetNetworkName(const char* name, const wchar_t* wName);
 protected:
 	void DoAccept();
 
@@ -52,9 +54,11 @@ protected:
 	virtual void OnAddNewSession(asAsioSession& session);
 	// 关闭
 	virtual void OnCloseSession(u32 sessionId);
+public:
+	std::string							m_name; // 网络服务名
 protected:
-	boost::asio::ip::tcp::endpoint				m_addr;
-	boost::asio::ip::tcp::acceptor*			m_acceptor;
+	boost::asio::ip::tcp::endpoint		m_addr;
+	boost::asio::ip::tcp::acceptor*		m_acceptor;
 	asAsioThread**						m_threads;
 	u32									m_threadNum;
 	u32									m_maxSessionCount;
@@ -64,7 +68,6 @@ private:
 	bool								m_isClient;
 	u32									m_sessionIDAlloc;
 	bool								m_isStoped;
-	boost::asio::ip::tcp::socket*				m_sockTmp; // 临时socket指针，做析构用
 };
 
 #endif

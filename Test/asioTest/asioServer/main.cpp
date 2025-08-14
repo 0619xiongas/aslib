@@ -20,7 +20,7 @@ int main()
 {
 	signal(SIGINT, SignalHandler);
 	AS_LOGGER->Init(nullptr);
-	g_server->Init("0.0.0.0", 10011, 1024 * 10, 1024 * 10, 4,1000);
+	g_server->Init("0.0.0.0", 10011, 1024 * 10, 1024 * 10, 4,1000,"asioTestServer");
 	g_server->TryRunNetwork(false);
 
 

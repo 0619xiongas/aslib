@@ -12,3 +12,6 @@ Test/mysqlTest/build/
 Test/uvTest/build/
 Test/uvTest/bin/
 Test/uvTest/public/
+Test/asioTest/build/
+Test/asioTest/bin/
+Test/asioTest/public/

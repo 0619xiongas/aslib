@@ -1,9 +1,9 @@
-#include "../../../include/net/asio/asAsioNetwork.h"
+﻿#include "../../../include/net/asio/asAsioNetwork.h"
 #include "../../../include/log/asLogger.h"
 asAsioNetwork::asAsioNetwork()
 	: m_acceptor(nullptr), m_threads(nullptr), m_threadNum(1), m_maxSessionCount(128),
 	m_recvBufSize(8 * 1024), m_sendBufSize(8 * 1024), m_isClient(false),
-	m_sessionIDAlloc(0),m_isStoped(false),m_sockTmp(nullptr)
+	m_sessionIDAlloc(0),m_isStoped(false),m_name("")
 {
 }
 
@@ -12,7 +12,7 @@ asAsioNetwork::~asAsioNetwork()
 	TryStopNetwork();
 }
 
-void asAsioNetwork::Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount)
+void asAsioNetwork::Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufSize, u32 threadCount, u32 sessionCount, std::string netName)
 {
 	boost::asio::ip::address addr;
 	addr = addr.from_string(ip);
@@ -22,6 +22,7 @@ void asAsioNetwork::Init(const char* ip, i32 port, u32 sendBufSize, u32 recvBufS
 	m_recvBufSize = recvBufSize;
 	m_maxSessionCount = sessionCount;
 	m_threadNum = threadCount;
+	m_name = netName;
 }
 
 bool asAsioNetwork::TryRunNetwork(bool isClient)
@@ -51,16 +52,16 @@ bool asAsioNetwork::TryRunNetwork(bool isClient)
 			}
 			catch (boost::system::system_error& ec)
 			{
-				AS_LOGGER->LogEx(LOGTYPE::ERR, "start listen error, %s", ec.what());
+				AS_LOGGER->LogEx(LOGTYPE::ERR, "%s start listen error, %s", m_name.c_str(), ec.what());
 				return false;
 			}
 			catch (...)
 			{
-				AS_LOGGER->Log(LOGTYPE::ERR, "asAsioNetwork error");
+				AS_LOGGER->Log(LOGTYPE::ERR, "asAsioNetwork TryRunNetwork error");
 				return false;
 			}
 			DoAccept();
-			AS_LOGGER->LogEx(LOGTYPE::TIP, "start listen %s : %d", m_addr.address().to_string().c_str(), m_addr.port());
+			AS_LOGGER->LogEx(LOGTYPE::TIP, "%s start listen %s : %d ...", m_name.c_str(), m_addr.address().to_string().c_str(), m_addr.port());
 		}
 		if (m_isStoped)
 		{
@@ -74,6 +75,7 @@ bool asAsioNetwork::TryStopNetwork()
 {
 	if (m_isStoped)
 		return false;
+	AS_LOGGER->LogEx(TIP, "%s TryStopNetwork ...", m_name.c_str());
 	m_isStoped = true;
 	if (!m_isClient && m_acceptor)
 	{
@@ -95,6 +97,7 @@ bool asAsioNetwork::TryStopNetwork()
 		}
 		AS_SAFE_DELETE_ARRAY(m_threads)
 	}
+	AS_LOGGER->LogEx(TIP, "%s Stopped Network ...", m_name.c_str());
 	return false;
 }
 
@@ -113,13 +116,13 @@ u32 asAsioNetwork::ConnectToServer()
 		}
 	}
 	u32 id = ++m_sessionIDAlloc;
-	// Ĭ�Ͽͻ��˿���һ���̣߳���threadID = 0
+	// 默认客户端模式只开一条线程 threadID = 0
 	boost::system::error_code ec;
 	boost::asio::ip::tcp::socket* sock = new boost::asio::ip::tcp::socket(m_threads[0]->m_ioc);
 	m_threads[0]->m_sockTmp = sock;
 	do 
 	{
-		AS_LOGGER->LogEx(TIP, "connect to %s : %d", m_addr.address().to_string().c_str(), m_addr.port());
+		AS_LOGGER->LogEx(TIP, "%s connect to %s : %d ...", m_name.c_str(), m_addr.address().to_string().c_str(), m_addr.port());
 		sock->connect(m_addr, ec);
 		if (!ec)
 		{
@@ -133,6 +136,7 @@ u32 asAsioNetwork::ConnectToServer()
 		}
 		asBaseThread::Sleep((u32)5 * 1000);
 	} while (ec && !m_isStoped);
+	AS_LOGGER->LogEx(TIP, "%s connect to %s : %d success !!!", m_name.c_str(), m_addr.address().to_string().c_str(), m_addr.port());
 	return 0;
 }
 
@@ -213,6 +217,19 @@ void asAsioNetwork::OnNewMessage(asAsioSession& session, u32 msgId, char* buf)
 	AS_SAFE_DELETE_ARRAY(buf);
 }
 
+void asAsioNetwork::SetNetworkName(const char* name, const wchar_t* wName)
+{
+	if (!m_threads)
+		return;
+	for (u32 i = 0; i < m_threadNum; ++i)
+	{
+		if (m_threads[i])
+		{
+			m_threads[i]->SetThreadName(i,name, wName);
+		}
+	}
+}
+
 void asAsioNetwork::DoAccept()
 {
 	u32 id = ++m_sessionIDAlloc;
@@ -258,7 +275,7 @@ void asAsioNetwork::HandleAccept(u32 sessionID, boost::asio::ip::tcp::socket* so
 			delete sock;
 			m_threads[sessionID % m_threadNum]->m_sockTmp = nullptr;
 			
-			AS_LOGGER->LogEx(ERR, "asAsioNetwork::HandleAccept seesion %u, occured error %s", ec.message().c_str());
+			AS_LOGGER->LogEx(ERR, "%s HandleAccept seesion %u, occured error %s", m_name.c_str(), ec.message().c_str());
 		}
 	}
 	DoAccept();
@@ -281,7 +298,7 @@ void asAsioNetwork::HandleReceived(const boost::system::error_code& ec, size_t b
 {
 	if (!sessionPtr)
 	{
-		AS_LOGGER->Log(ERR, "asAsioNetwork::HandleReceived, asAsioSession ptr is nullptr !!! ");
+		AS_LOGGER->LogEx(ERR, "%s HandleReceived, asAsioSession ptr is nullptr !!! ",m_name.c_str());
 		return;
 	}
 	u32 sessionID = sessionPtr->GetID();
@@ -309,11 +326,11 @@ void asAsioNetwork::HandleCloseSession(u32 threadID, u32 sessionID)
 		}
 		catch (boost::system::system_error& e)
 		{
-			AS_LOGGER->LogEx(ERR, "asAsioNetwork::HandleCloseSession %u, occured error, %s", sessionID, e.what());
+			AS_LOGGER->LogEx(ERR, "%s HandleCloseSession %u, occured error, %s", m_name.c_str(), sessionID, e.what());
 		}
 		catch (boost::system::error_code& e)
 		{
-			AS_LOGGER->LogEx(ERR, "asAsioNetwork::HandleCloseSession %u, occured error, %s", sessionID, e.message().c_str());
+			AS_LOGGER->LogEx(ERR, "%s HandleCloseSession %u, occured error, %s", m_name.c_str(), sessionID, e.message().c_str());
 		}
 		th->m_sessions.erase(sessionID);
 		delete sessionPtr;
