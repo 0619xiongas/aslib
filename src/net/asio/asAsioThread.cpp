@@ -4,7 +4,7 @@ asAsioThread::asAsioThread():
 	m_work(new boost::asio::io_context::work(m_ioc)),m_thread(boost::bind(&boost::asio::io_context::run,&m_ioc)),
 	m_sockTmp(nullptr)
 {
-
+	
 }
 
 asAsioThread::~asAsioThread()
@@ -21,7 +21,7 @@ void asAsioThread::ClearSession()
 		boost::system::error_code ec1, ec2;
 		itr->second->GetSocket()->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec1);
 		itr->second->GetSocket()->close(ec2);
-		delete itr->second;
+		m_asioSeesionPool.Destroy(itr->second);
 	}
 	m_sessions.clear();
 }
@@ -40,6 +40,11 @@ asAsioSession* asAsioThread::GetSession(u32 id)
 		ptr = itr->second;
 	}
 	return ptr;
+}
+
+void asAsioThread::InitSessionPool(u32 size)
+{
+	m_asioSeesionPool.Init(size);
 }
 
 void asAsioThread::SetThreadName(u32 id, const char* name, const wchar_t* wName)

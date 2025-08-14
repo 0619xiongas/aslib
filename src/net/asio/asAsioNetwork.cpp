@@ -34,6 +34,7 @@ bool asAsioNetwork::TryRunNetwork(bool isClient)
 		for(u32 i = 0;i < m_threadNum;++i)
 		{
 			m_threads[i] = new asAsioThread();
+			m_threads[i]->InitSessionPool(m_maxSessionCount / m_threadNum + 1);
 		}
 		if(m_isClient)
 		{
@@ -126,7 +127,7 @@ u32 asAsioNetwork::ConnectToServer()
 		sock->connect(m_addr, ec);
 		if (!ec)
 		{
-			asAsioSession* sessionPtr = new asAsioSession();
+			asAsioSession* sessionPtr = m_threads[0]->m_asioSeesionPool.Allocate();
 			sessionPtr->Init(id, sock, m_recvBufSize, m_sendBufSize, this);
 			m_threads[0]->m_sessions.insert(std::pair<u32, asAsioSession*>(id, sessionPtr));
 			StartReceive(sessionPtr);
@@ -260,7 +261,7 @@ void asAsioNetwork::HandleAccept(u32 sessionID, boost::asio::ip::tcp::socket* so
 			}
 			else
 			{
-				asAsioSession* sessionPtr = new asAsioSession();
+				asAsioSession* sessionPtr = m_threads[sessionID % m_threadNum]->m_asioSeesionPool.Allocate();
 				sessionPtr->Init(sessionID, sock, m_recvBufSize, m_sendBufSize, this);
 				u32 threadID = sessionID % m_threadNum;
 				m_threads[threadID]->m_ioc.post(boost::bind(&asAsioNetwork::HandleAddSession, this, threadID, sessionPtr));
@@ -333,7 +334,7 @@ void asAsioNetwork::HandleCloseSession(u32 threadID, u32 sessionID)
 			AS_LOGGER->LogEx(ERR, "%s HandleCloseSession %u, occured error, %s", m_name.c_str(), sessionID, e.message().c_str());
 		}
 		th->m_sessions.erase(sessionID);
-		delete sessionPtr;
+		th->m_asioSeesionPool.Destroy(sessionPtr);
 		sessionPtr = nullptr;
 		OnCloseSession(sessionID);
 	}

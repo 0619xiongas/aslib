@@ -5,6 +5,7 @@
 #include <boost/thread.hpp>
 #include <boost/move/unique_ptr.hpp>
 #include <map>
+#include "../../memory/asMemoryPool.h"
 class asAsioNetwork;
 class asAsioThread
 {
@@ -19,6 +20,8 @@ public:
 
 	asAsioSession* GetSession(u32 id);
 
+	void InitSessionPool(u32 size);
+
 	void SetThreadName(u32 id, const char* name, const wchar_t* wName);
 private:
 	void HandleSetThreadName(const boost::system::error_code& ec, boost::shared_ptr<boost::asio::deadline_timer>& timer,
@@ -29,6 +32,7 @@ private:
 	boost::thread					m_thread;
 	std::map<u32, asAsioSession*>	m_sessions;
 	boost::asio::ip::tcp::socket*	m_sockTmp;
+	asMemoryPool<asAsioSession>		m_asioSeesionPool;
 };
 #endif // !AS_ASIOTHREAD_H
 
