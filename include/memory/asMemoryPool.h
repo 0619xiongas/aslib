@@ -93,4 +93,22 @@ private:
 	u32				m_blockTotalNum;
 	u32				m_memoryNum; // 页数
 };
+#define AS_MP_128	1 << 7
+#define AS_MP_256	1 << 8
+#define AS_MP_512	1 << 9
+#define AS_MP_1kb	1 << 10
+#define AS_MP_2kb	1 << 11
+#define AS_MP_4kb	1 << 12
+#define AS_MP_8kb	1 << 13
+#define AS_MP_16kb	1 << 14
+#define AS_MP_32kb	1 << 15
+#define AS_MP_64kb	1 << 16
+class asTableMemoryPool
+{
+public:
+	asTableMemoryPool()
+	~asTableMemoryPool()
+private:
+	
+};
 #endif
