@@ -3,7 +3,7 @@
 
 #include "../asBaseDefine.h"
 
-template<class T>
+template<class T,u32 NUM>
 class asMemoryPool
 {
 public:
@@ -12,13 +12,7 @@ public:
 	asMemoryPool() :m_blockSize(sizeof(T) < sizeof(BlockNode) ? sizeof(BlockNode) : sizeof(T)),
 		m_blockTotalNum(0), m_memoryNum(0)
 	{
-
-	}
-	asMemoryPool(u32 TNums) :
-		m_blockSize(sizeof(T) < sizeof(BlockNode) ? sizeof(BlockNode) : sizeof(T)),
-		m_blockNum(TNums), m_blockTotalNum(0), m_memoryNum(0)
-	{
-		AllocateBlocks(m_blockNum);
+		AllocateBlocks(NUM);
 	}
 	~asMemoryPool()
 	{
@@ -29,19 +23,16 @@ public:
 			::operator delete(cur->memory);
 			delete cur;
 			cur = next;
-		}  
-	}
-	void Init(u32 TNums)
-	{
-		m_blockNum = TNums;
-		AllocateBlocks(m_blockNum);
+		}
+		m_memoryList = nullptr;
+		m_freeList = nullptr;
 	}
 	template<typename ... Args>
 	T* Allocate(Args&& ...args)
 	{
 		if (!m_freeList) // 用完了 进行池内存拓展
 		{
-			AllocateBlocks(m_blockNum / 2);
+			AllocateBlocks(NUM / 2);
 		}
 		void* obj = m_freeList;
 		m_freeList = m_freeList->next;
@@ -64,7 +55,6 @@ private:
 		++m_memoryNum;
 		
 		//存入m_freeList;
-		BlockNode* bNode = static_cast<BlockNode*>(newChunks);
 		for (u32 i = 0; i < num; ++i)
 		{
 			BlockNode* next = reinterpret_cast<BlockNode*>(
@@ -88,7 +78,6 @@ private:
 	};
 	BlockNode*		m_freeList = nullptr;   // 块链表
 	MemoryNode*		m_memoryList = nullptr;	// 页链表
-	u32				m_blockNum;
 	u32				m_blockSize;
 	u32				m_blockTotalNum;
 	u32				m_memoryNum; // 页数
