@@ -32,7 +32,7 @@ private:
 	boost::thread					m_thread;
 	std::map<u32, asAsioSession*>	m_sessions;
 	boost::asio::ip::tcp::socket*	m_sockTmp;
-	asMemoryPool<asAsioSession>		m_asioSeesionPool;
+	asMemoryPool<asAsioSession,1000>		m_asioSeesionPool;
 };
 #endif // !AS_ASIOTHREAD_H
 
