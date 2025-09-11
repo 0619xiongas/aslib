@@ -52,7 +52,7 @@ else()
     find_package(uv REQUIRED)
 endif()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system thread)
+#find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${MYSQL_INCLUDE_DIR})
 include_directories(${LIBUV_INCLUDE_DIR})

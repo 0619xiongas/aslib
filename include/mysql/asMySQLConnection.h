@@ -2,7 +2,7 @@
 #define AS_MYSQLCONNECTION_H
 
 #include "asMySQLDefine.h"
-
+#include <string>
 /*
 * 封装MYSQL的连接,封装基础api，作为组件。结果集不在此
 */

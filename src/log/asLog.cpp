@@ -1,12 +1,12 @@
 ﻿#include "../../include/log/asLog.h"
 #include <map>
 #include "../../include/time/asTime.h"
-
+#include <cstring>
 
 asLog::asLog(char sub,const char* path)
 	:m_subsection(sub)
 {
-	memset(m_lastTime,0,sizeof(char) * 32);
+	::memset(m_lastTime,0,sizeof(char) * 32);
 	m_info.GetInfo();
 	if (path)
 	{

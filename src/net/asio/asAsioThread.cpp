@@ -44,7 +44,7 @@ asAsioSession* asAsioThread::GetSession(u32 id)
 
 void asAsioThread::InitSessionPool(u32 size)
 {
-	m_asioSeesionPool.Init(size);
+
 }
 
 void asAsioThread::SetThreadName(u32 id, const char* name, const wchar_t* wName)

@@ -407,7 +407,7 @@ public:
 	{
 		if (data)
 		{
-			::memcpy(&time, data, len);
+			::memcpy(&value, data, len);
 			m_null = 0;
 		}
 		else

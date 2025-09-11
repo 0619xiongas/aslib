@@ -1,7 +1,7 @@
 ﻿#include "../../include/time/asTime.h"
 #include <chrono>
 #include <cstring>
-
+#include <cstdio>
 time_t asTime::s_sysStart = ::time(NULL);
 time_t asTime::s_sysZone = asTime::GetSysTimeZone();
 time_t asTime::s_timeZone = 8 * 60 * 60;

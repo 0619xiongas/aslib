@@ -95,8 +95,8 @@ private:
 class asTableMemoryPool
 {
 public:
-	asTableMemoryPool()
-	~asTableMemoryPool()
+	asTableMemoryPool();
+	~asTableMemoryPool();
 private:
 	
 };
