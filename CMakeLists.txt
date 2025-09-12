@@ -11,6 +11,8 @@ if(MSVC)
     endforeach()
 
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+    add_compile_definitions(ASIO_STANDALONE)
+    add_compile_definitions(ASIO_SEPARATE_COMPILATION)
 endif()
 
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third")
@@ -19,13 +21,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
-    #设置boost路径
-    set(BOOST_ROOT "${THIRD_PARTY_DIR}/boost")
-    set(Boost_NO_SYSTEM_PATHS ON)
-    set(Boost_INCLUDE_DIR "${BOOST_ROOT}/include")
-    set(Boost_LIBRARY_DIR "${BOOST_ROOT}/lib")
-    set(Boost_USE_STATIC_LIBS ON)
-    set(Boost_USE_MULTITHREADED ON)
+    #设置asio路径
+    set(ASIO_INCLUDE_DIR "${THIRD_PARTY_DIR}/asio/include")
+    set(ASIO_LIB_DIR "${THIRD_PARTY_DIR}/asio/lib")
+    
     #设置mysql路径
     set(MYSQL_INCLUDE_DIR "${THIRD_PARTY_DIR}/mysql/include")
     set(MYSQL_LIB_DIR "${THIRD_PARTY_DIR}/mysql/lib")
@@ -46,27 +45,27 @@ if(WIN32)
     NO_DEFAULT_PATH
     )
 else()
-    #boost
-    set(Boost_USE_STATIC_LIBS ON)
+    #设置asio路径
+    set(ASIO_INCLUDE_DIR "${THIRD_PARTY_DIR}/asio/include")
+    
     find_package(MySQL REQUIRED)
     find_package(uv REQUIRED)
 endif()
 
-#find_package(Boost REQUIRED COMPONENTS filesystem system thread)
-include_directories(${Boost_INCLUDE_DIR})
+include_directories(${ASIO_INCLUDE_DIR})
 include_directories(${MYSQL_INCLUDE_DIR})
 include_directories(${LIBUV_INCLUDE_DIR})
 
 # 添加各模块
-add_subdirectory(src/tools)
-add_subdirectory(src/file)
-add_subdirectory(src/buffer)
-add_subdirectory(src/algorithm)
-add_subdirectory(src/time)
-add_subdirectory(src/log)
-add_subdirectory(src/mysql)
-add_subdirectory(src/thread)
-add_subdirectory(src/net)
+add_subdirectory(code/tools)
+add_subdirectory(code/file)
+add_subdirectory(code/buffer)
+add_subdirectory(code/algorithm)
+add_subdirectory(code/time)
+add_subdirectory(code/log)
+add_subdirectory(code/mysql)
+add_subdirectory(code/thread)
+add_subdirectory(code/net)
 # 你有其他模块就继续 add_subdirectory(src/xxx)
 
 # 汇总所有 OBJECT 库，生成最终静态库
@@ -83,19 +82,17 @@ add_library(aslib STATIC
     # 其他模块继续添加
 )
 
-target_include_directories(aslib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
 link_directories(
-    ${Boost_LIBRARY_DIR}
+    ${ASIO_LIB_DIR}
     ${LIBUV_LIB_DIR}
     ${MYSQL_LIB_DIR}
 )
 target_link_libraries(aslib PUBLIC 
-    boost_filesystem
-    boost_system
-    boost_thread
+    asio
     uv
+if(WIN32)
+    ws2_32
+endif()
 )
 if(WIN32)
     target_link_directories(aslib PUBLIC ${MYSQL_LIB_DIR})
@@ -110,8 +107,39 @@ else()
     target_compile_options(aslib PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-if(WIN32)
-    set_target_properties(aslib PROPERTIES 
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib"
+# 设置输出目录
+set(OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/out")
+set(LIB_OUTPUT_DIR "${OUTPUT_DIR}/lib")
+set(INCLUDE_OUTPUT_DIR "${OUTPUT_DIR}/include")
+
+# 设置静态库输出目录
+set_target_properties(aslib PROPERTIES 
+    ARCHIVE_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+)
+
+# 创建输出目录
+add_custom_command(TARGET aslib POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${LIB_OUTPUT_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${INCLUDE_OUTPUT_DIR}"
+    COMMENT "Creating output directories"
+)
+
+# 复制所有头文件到include目录，保持目录结构
+file(GLOB_RECURSE HEADER_FILES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/code/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/code/*.hpp"
+)
+
+foreach(header_file ${HEADER_FILES})
+    # 获取头文件相对于code目录的相对路径
+    file(RELATIVE_PATH relative_path "${CMAKE_CURRENT_SOURCE_DIR}/code" "${header_file}")
+    # 获取目标目录路径
+    get_filename_component(target_dir "${INCLUDE_OUTPUT_DIR}/${relative_path}" DIRECTORY)
+    
+    # 创建目标目录并复制头文件
+    add_custom_command(TARGET aslib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${target_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${header_file}" "${target_dir}/"
+        COMMENT "Copying header file: ${relative_path}"
     )
-endif()
+endforeach()

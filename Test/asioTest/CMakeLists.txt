@@ -1,24 +1,27 @@
 cmake_minimum_required(VERSION 3.10)
 project(asioTest)
 
-# if(MSVC)
-#     foreach(flag_var
-#         CMAKE_C_FLAGS_DEBUG
-#         CMAKE_CXX_FLAGS_DEBUG
-#         CMAKE_C_FLAGS_DEBUG_INIT
-#         CMAKE_CXX_FLAGS_DEBUG_INIT)
-#         string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-#     endforeach()
-# endif()
+if(MSVC)
+    foreach(flag_var
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_C_FLAGS_DEBUG_INIT
+        CMAKE_CXX_FLAGS_DEBUG_INIT)
+        string(REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+    endforeach()
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+    add_compile_definitions(ASIO_STANDALONE)
+    add_compile_definitions(ASIO_SEPARATE_COMPILATION)
+endif()
 
 # 假设 aslib 库已编译好，lib和include目录与Test同级
 set(ASLIB_ROOT "${CMAKE_SOURCE_DIR}/../../")
-set(ASLIB_INCLUDE "${ASLIB_ROOT}/include")
-set(ASLIB_LIB "${ASLIB_ROOT}/lib/Debug")
+set(ASLIB_INCLUDE "${ASLIB_ROOT}/out/include")
+set(ASLIB_LIB "${ASLIB_ROOT}/out/lib/Debug")
 
-# Boost 和 libuv 路径（如有需要可调整）
-set(BOOST_LIB "${ASLIB_ROOT}/third/boost/lib")
-set(BOOST_INCLUDE "${ASLIB_ROOT}/third/boost/include")
+# asio 和 libuv 路径（如有需要可调整）
+set(ASIO_LIB "${ASLIB_ROOT}/third/asio/lib")
+set(ASIO_INCLUDE "${ASLIB_ROOT}/third/asio/include")
 set(VLD_LIB "${ASLIB_ROOT}/third/vld/lib/x64")
 set(VLD_INCLUDE "${ASLIB_ROOT}/third/vld/include")
 
@@ -27,14 +30,14 @@ include_directories(${CMAKE_SOURCE_DIR}/public/netcpp)
 
 include_directories(
     ${ASLIB_INCLUDE}
-    ${BOOST_INCLUDE}
+    ${ASIO_INCLUDE}
     ${VLD_INCLUDE}
 )
 include_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/include)
 
 link_directories(
     ${ASLIB_LIB}
-    ${BOOST_LIB}
+    ${ASIO_LIB}
     ${VLD_LIB}
 )
 link_directories(${CMAKE_SOURCE_DIR}/../../third/protobuf/lib/debug)
@@ -59,14 +62,26 @@ add_executable(asioClient
 target_link_libraries(asioServer
     aslib
     libprotobufd
+    asio
     vld
 )
+if(WIN32)
+    target_link_libraries(asioServer
+     ws2_32
+    )
+endif()
 
 target_link_libraries(asioClient
     aslib
     libprotobufd
+    asio
     vld
 )
+if(WIN32)
+    target_link_libraries(asioClient
+     ws2_32
+    )
+endif()
 
 # 可选：设置输出目录
 set_target_properties(asioServer PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/server")

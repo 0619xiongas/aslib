@@ -6,9 +6,9 @@ LIBS = -lmysqlclient -lboost_system -lboost_thread -luv -lprotobuf -lcjson -lpth
 
 BUILD_DIR = build
 
-# 查找所有源文件
-SRCS := $(shell find src -name "*.cpp")
-OBJS := $(patsubst src/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+# 查找所有源文件（从code目录递归查找）
+SRCS := $(shell find code -name "*.cpp")
+OBJS := $(patsubst code/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
 # 输出库名
 TARGET_STATIC = lib/aslib.a
